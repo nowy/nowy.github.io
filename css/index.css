@@ -57,6 +57,71 @@ p:last-child {
 .app__brain,
 .app__gutter {
   flex: 1 1 auto;
+  transition: flex 180ms ease-out;
+}
+
+.app__gutter {
+  order: 1;
+}
+
+.app__brain {
+  order: 3;
+  position: relative;
+  display: flex;
+  transition: background-color 180ms ease-out, border-color 180ms ease-out;
+}
+
+.app__brain::after {
+  content: '';
+  z-index: 1;
+  width: 40%;
+  height: 100%;
+  background: white;
+  background: linear-gradient(to right, #ffffff 0%,rgba(255, 255, 255, 0) 100%);
+  opacity: 1;
+  transition: opacity 180ms ease-out;
+}
+
+.app__brain-trigger {
+  position: absolute;
+  left: 0;
+  transform: translateX(-50%);
+  z-index: 2;
+  transition: transform 180ms ease-out;
+}
+
+.app__brain-map {
+  display: none;
+  width: 100%;
+  height: 100vh;
+  border: none;
+  margin: 0;
+  padding: 0;
+  opacity: 0.2;
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  transition: opacity 180ms ease-out;
+}
+
+.app__brain-description {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 40px;
+  border-radius: 4px;
+  margin-top: 180px;
+  box-shadow: 30px -2px 74px -30px rgb(0 0 0 / 10%);
+  max-width: 600px;
+  animation-duration: .2s;
+  animation-name: slidein;
+  animation-fill-mode: forwards;
+  z-index: 2;
 }
 
 .app__main {
@@ -66,8 +131,49 @@ p:last-child {
   padding: 0 20px 50px;
   min-width: 300px;
   box-sizing: border-box;
-  margin: 0 auto;
+  margin: 0 50px;
   flex: 0 1 650px;
+  transition: flex 180ms ease-out;
+  order: 2;
+}
+
+.app__main--notes + .app__gutter {
+  flex: 0 0 auto;
+}
+
+.app__main--notes ~ .app__brain {
+  background-color: #f7f7f7;
+  box-shadow: inset 30px -2px 74px -30px rgb(0 0 0 / 10%);
+}
+
+.app__main--notes ~ .app__brain .app__brain-map {
+  display: block;
+  opacity: 1;
+}
+
+.app__main--notes ~ .app__brain::after {
+  opacity: 0;
+}
+
+.app__main--notes ~ .app__brain .app__brain-description {
+  display: none;
+}
+
+.app__main--notes ~ .app__brain .app__brain-trigger,
+.app__brain-trigger:hover,
+.app__brain-trigger:focus {
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.app__brain-trigger:hover ~ .app__brain-description,
+.app__brain-trigger:focus ~ .app__brain-description {
+  display: block;
+}
+
+.app__main--notes .app__brain-map,
+.app__brain-trigger:focus ~ .app__brain-map,
+.app__brain-trigger:hover ~ .app__brain-map  {
+  display: block;
 }
 
 .content {
@@ -90,4 +196,44 @@ h1 {
   font-weight: 500;
   line-height: var(--font-size-xl); */
   /* margin: 0 0 30px; */
+}
+
+.button {
+  padding: 15px 25px;
+  font-size: 22px;
+  outline: none;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  color: var(--blue);
+  margin: 208px auto auto;
+  border: none;
+  cursor: pointer;
+}
+
+.app__brain:focus-within .app__brain-trigger,
+.app__brain:hover .app__brain-trigger,
+.button:focus,
+.button:hover {
+  outline: 3px solid transparent;
+  background-color: var(--link-focus-bg);
+  text-decoration: none;
+}
+
+a[href]:hover {
+  color: var(--link-hover);
+}
+
+@keyframes slidein {
+  from {
+    opacity: 0;
+    top: 10%;
+  }
+
+  to {
+    opacity: 1;
+    top: 0;
+  }
 }

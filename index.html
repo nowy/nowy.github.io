@@ -9,20 +9,24 @@
     <link rel="stylesheet" href="/css/prism-base16-monokai.dark.css">
     <link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Noel Varanda">
     <link rel="alternate" href="/feed/feed.json" type="application/json" title="Noel Varanda">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+    <link rel="manifest" href="/img/site.webmanifest">
+    <link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
   </head>
   <body>
     <main class="app">
       
-<div class="app__gutter"></div>
 <div class="app__main">
   <section class="content">
-    <h1>Noel Varanda</h1>
+    <h1 class="intro">Noel Varanda</h1>
     <p class="hero-text">
       I'm no designer, but I reckon I need at least three lines of text to make this paragraph "fit in". Read some of my content below
       or get in touch using some of the links above. Nailed it.
     </p>
-
     
     <ol reversed class="posts">
 
@@ -50,7 +54,26 @@
 
   </section>
 </div>
-<div class="app__brain"></div>
+<div class="app__gutter"></div>
+<div class="app__brain">
+  <button class="button app__brain-trigger">&#8250;</button>
+  <div class="app__brain-description hero-text">
+    I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to eachother.
+  </div>
+  <iframe src="http://localhost:1234" class="app__brain-map"></iframe>
+</div>
+<script>
+const appMain = document.querySelector('.app__main')
+const button = document.querySelector('.button')
+  button.addEventListener('click', () => {
+    if (appMain.classList.contains('app__main--notes')) {
+      appMain.classList.remove('app__main--notes')
+      return
+    }
+
+    appMain.classList.add('app__main--notes')
+  })
+</script>
 
 
     </main>
