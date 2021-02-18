@@ -1,0 +1,23 @@
+a[href] {
+  color: var(--link);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
+}
+
+a[href]:focus {
+  outline: 3px solid transparent;
+  background-color: var(--link-focus-bg);
+  box-shadow: 0 -2px var(--link-focus-bg), 0 4px var(--text-primary);
+  text-decoration: none;
+}
+
+a[href]:hover {
+  color: var(--link-hover);
+}
+
+a[href]:active {
+  color: var(--text-primary);
+}
+
+a[href]:visited {
+  text-decoration: underline;
+}

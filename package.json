@@ -1,0 +1,26 @@
+{
+  "name": "nowy.github.io",
+  "version": "0.0.1",
+  "description": "Personal blog.",
+  "main": "index.js",
+  "scripts": {
+    "build": "ELEVENTY_ENV=production node -r esm node_modules/.bin/eleventy",
+    "serve": "ELEVENTY_ENV=development node -r esm node_modules/.bin/eleventy --serve",
+    "debug": "DEBUG=* node -r esm node_modules/.bin/eleventy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/reubenlillie/nowy.github.io.git",
+    "https": "https://gitlab.com/reubenlillie/nowy.github.io.git",
+    "editUrl": "https://gitlab.com/reubenlillie/nowy.github.io/-/edit/master"
+  },
+  "author": "Noel Varanda",
+  "license": "MIT",
+  "devDependencies": {
+    "@11ty/eleventy": "^0.11.1",
+    "clean-css": "^4.2.3",
+    "esm": "^3.2.25",
+    "html-minifier": "^4.0.0",
+    "terser": "^5.5.1"
+  }
+}

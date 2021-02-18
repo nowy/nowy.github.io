@@ -1,0 +1,16 @@
+.tag {
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: var(--font-size-s);
+  padding: 0 4px;
+  margin-left: 0.8em;
+  background-color: var(--red);
+  color: var(--background);
+  border-radius: 0.25em;
+  text-decoration: none;
+}
+
+a[href].tag,
+a[href].tag:visited {
+  color: var(--background);
+}
