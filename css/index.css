@@ -64,17 +64,6 @@ p:last-child {
   transition: background-color 180ms ease-out, border-color 180ms ease-out;
 }
 
-.app__brain::after {
-  content: '';
-  z-index: 1;
-  width: 40%;
-  height: 100%;
-  background: white;
-  background: linear-gradient(to right, #ffffff 0%,rgba(255, 255, 255, 0) 100%);
-  opacity: 1;
-  transition: opacity 180ms ease-out;
-}
-
 .app__brain-trigger {
   position: absolute;
   left: 0;
@@ -83,7 +72,7 @@ p:last-child {
   transition: transform 180ms ease-out;
 }
 
-.app__brain-map {
+.app__brain-network {
   display: none;
   width: 100%;
   height: 100vh;
@@ -100,6 +89,10 @@ p:last-child {
   transition: opacity 180ms ease-out;
 }
 
+.app__brain-network .vis-network:focus{
+  outline: none;
+}
+
 .app__brain-description {
   display: none;
   position: absolute;
@@ -110,7 +103,7 @@ p:last-child {
   border-radius: 4px;
   margin-top: 180px;
   box-shadow: 30px -2px 74px -30px rgb(0 0 0 / 10%);
-  max-width: 600px;
+  width: 300px;
   animation-duration: .2s;
   animation-name: slidein;
   animation-fill-mode: forwards;
@@ -139,13 +132,9 @@ p:last-child {
   box-shadow: inset 30px -2px 74px -30px rgb(0 0 0 / 10%);
 }
 
-.app__main--notes ~ .app__brain .app__brain-map {
+.app__main--notes ~ .app__brain .app__brain-network {
   display: block;
   opacity: 1;
-}
-
-.app__main--notes ~ .app__brain::after {
-  opacity: 0;
 }
 
 .app__main--notes ~ .app__brain .app__brain-description {
@@ -163,9 +152,9 @@ p:last-child {
   display: block;
 }
 
-.app__main--notes .app__brain-map,
-.app__brain-trigger:focus ~ .app__brain-map,
-.app__brain-trigger:hover ~ .app__brain-map  {
+.app__main--notes .app__brain-network,
+.app__brain-trigger:focus ~ .app__brain-network,
+.app__brain-trigger:hover ~ .app__brain-network  {
   display: block;
 }
 

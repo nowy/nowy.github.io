@@ -1,5 +1,5 @@
 export function render(data) {
-  console.warn(data)
+  // console.warn(data)
   return `<!doctype html>
   <html lang="${data.locale ? data.site[data.locale].locale : data.site.defaultLocale}">
     ${this.headTag(data)}

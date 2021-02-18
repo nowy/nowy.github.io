@@ -22,5 +22,8 @@
     "esm": "^3.2.25",
     "html-minifier": "^4.0.0",
     "terser": "^5.5.1"
+  },
+  "dependencies": {
+    "notesnetwork": "^1.0.5"
   }
 }

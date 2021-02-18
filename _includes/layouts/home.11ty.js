@@ -16,14 +16,18 @@ export function render(data) {
   </div>
   <div class="app__gutter"></div>
   <div class="app__brain">
+    <div id="network" class="app__brain-network"></div>
     <button class="button app__brain-trigger">&#8250;</button>
     <div class="app__brain-description hero-text">
       I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to eachother.
     </div>
   </div>
-  <script>
-  const appMain = document.querySelector('.app__main')
-  const button = document.querySelector('.button')
+  <script type="module">
+    import { createNotesNetwork } from './assets/notes-network.js';
+
+    const appMain = document.querySelector('.app__main')
+    const button = document.querySelector('.button')
+
     button.addEventListener('click', () => {
       if (appMain.classList.contains('app__main--notes')) {
         appMain.classList.remove('app__main--notes')
@@ -32,7 +36,13 @@ export function render(data) {
   
       appMain.classList.add('app__main--notes')
     });
-  
+
+    console.warn('FIRED')
+    const network = createNotesNetwork({
+      container: document.getElementById('network'),
+      notes: ${JSON.stringify(data.notes)},
+    })
+
   </script>
   `
 }

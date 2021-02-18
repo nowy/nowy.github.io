@@ -7,6 +7,9 @@ export default function (eleventyConfig) {
   eleventyConfig.setDataDeepMerge(true)
   eleventyConfig.addPassthroughCopy('css')
   eleventyConfig.addPassthroughCopy('img')
+  eleventyConfig.addPassthroughCopy({
+    'node_modules/notesnetwork/dist/index.js': 'assets/notes-network.js',
+  })
 
   eleventyConfig.addWatchTarget('./**/*.css')
   eleventyConfig.addWatchTarget('./**/*.js')
