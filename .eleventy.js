@@ -5,7 +5,7 @@ export default function (eleventyConfig) {
   includes(eleventyConfig)
 
   eleventyConfig.setDataDeepMerge(true)
-  eleventyConfig.addPassthroughCopy('css')
+  eleventyConfig.addPassthroughCopy('style')
   eleventyConfig.addPassthroughCopy('img')
   eleventyConfig.addPassthroughCopy({
     'node_modules/notesnetwork/dist/index.js': 'assets/notes-network.js',
