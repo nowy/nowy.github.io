@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "generate:network": "ts-node --project script/tsconfig.json script/generateNetwork.ts",
-    "build": "ELEVENTY_ENV=production node -r esm node_modules/.bin/eleventy",
+    "build:assets": "rollup --config",
+    "build": "concurrently \"npm run generate:network\" \"npm run build:assets\" \"ELEVENTY_ENV=production node -r esm node_modules/.bin/eleventy\"",
     "serve": "ELEVENTY_ENV=development node -r esm node_modules/.bin/eleventy --serve",
     "debug": "DEBUG=* node -r esm node_modules/.bin/eleventy"
   },
@@ -19,17 +20,27 @@
   "license": "MIT",
   "devDependencies": {
     "@11ty/eleventy": "^0.11.1",
-    "@types/node": "^14.14.30",
+    "@babel/core": "^7.12.17",
+    "@babel/preset-typescript": "^7.12.17",
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-node-resolve": "^11.2.0",
+    "@rollup/plugin-typescript": "^8.2.0",
+    "@types/node": "^14.14.28",
     "@types/showdown": "^1.9.3",
+    "babel-preset-es2015": "^6.24.1",
     "clean-css": "^4.2.3",
+    "concurrently": "^5.3.0",
     "esm": "^3.2.25",
     "html-minifier": "^4.0.0",
+    "rollup": "^2.39.0",
+    "rollup-plugin-babel": "^4.4.0",
     "showdown": "^1.9.1",
     "terser": "^5.5.1",
     "tslib": "^2.1.0",
     "typescript": "^4.1.5"
   },
   "dependencies": {
-    "notesnetwork": "^1.0.7"
+    "vis-data": "^7.1.2",
+    "vis-network": "^9.0.2"
   }
 }
