@@ -1,32 +1,20 @@
-import { createNetwork } from './network';
+import { createNotesNetwork, NotesNetwork } from './notes-network';
 
-interface NotesNetwork {
-  nodes: {
-    id: number
-    label: string
-    metaData: Record<string, string[]>
-  }[]
-  edges: { source: number, target: number }[]
-}
+export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
+  const container = document.getElementById('network')
+  const appMain = document.querySelector('.app__main')
+  const button = document.querySelector('.button')
 
-const isSystemTag = (tag: string) => ['literature-note', 'index-card'].includes(tag);
+  if (!button || !appMain || !container) return
 
-
-export const createNotesNetwork = async (options: {
-  notes: NotesNetwork,
-  container: HTMLElement
-}) => {
-  const { notes, container } = options
-  const edges = notes.edges.map(({ source, target }) => ({ from: source, to: target }))
-  const networkNodes = notes.nodes.map(node => ({
-    ...node,
-    value: Math.max(1, edges.filter(edge => edge.to === node.id || edge.from === node.id).length),
-    group: node.metaData.tags?.filter(tag => !isSystemTag(tag))[0] ?? undefined
-  }))
-
-  return createNetwork({
-    container,
-    edges,
-    nodes: networkNodes
+  button.addEventListener('click', () => {
+    if (appMain.classList.contains('app__main--notes')) {
+      appMain.classList.remove('app__main--notes')
+      return
+    }
+  
+    appMain.classList.add('app__main--notes')
   })
+
+  await createNotesNetwork({ notes, container })
 }
