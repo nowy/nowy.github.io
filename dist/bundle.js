@@ -1,3 +1,912 @@
+var PARAMETER_REGEXP = /([:*])(\w+)/g;
+var REPLACE_VARIABLE_REGEXP = "([^/]+)";
+var WILDCARD_REGEXP = /\*/g;
+var REPLACE_WILDCARD = "?(?:.*)";
+var NOT_SURE_REGEXP = /\/\?/g;
+var REPLACE_NOT_SURE = "/?([^/]+|)";
+var START_BY_SLASH_REGEXP = "(?:/^|^)";
+var MATCH_REGEXP_FLAGS = "";
+
+function getCurrentEnvURL(fallback) {
+  if (fallback === void 0) {
+    fallback = "/";
+  }
+
+  if (windowAvailable()) {
+    return location.pathname + location.search + location.hash;
+  }
+
+  return fallback;
+}
+function clean(s) {
+  return s.replace(/\/+$/, "").replace(/^\/+/, "");
+}
+function isString(s) {
+  return typeof s === "string";
+}
+function isFunction(s) {
+  return typeof s === "function";
+}
+function extractHashFromURL(url) {
+  if (url && url.indexOf("#") >= 0) {
+    return url.split("#").pop() || "";
+  }
+
+  return "";
+}
+function regExpResultToParams(match, names) {
+  if (names.length === 0) return null;
+  if (!match) return null;
+  return match.slice(1, match.length).reduce(function (params, value, index) {
+    if (params === null) params = {};
+    params[names[index]] = decodeURIComponent(value);
+    return params;
+  }, null);
+}
+function extractGETParameters(url) {
+  var tmp = clean(url).split(/\?(.*)?$/);
+  return [clean(tmp[0]), tmp.slice(1).join("")];
+}
+function parseQuery(queryString) {
+  var query = {};
+  var pairs = queryString.split("&");
+
+  for (var i = 0; i < pairs.length; i++) {
+    var pair = pairs[i].split("=");
+
+    if (pair[0] !== "") {
+      var key = decodeURIComponent(pair[0]);
+
+      if (!query[key]) {
+        query[key] = decodeURIComponent(pair[1] || "");
+      } else {
+        if (!Array.isArray(query[key])) query[key] = [query[key]];
+        query[key].push(decodeURIComponent(pair[1] || ""));
+      }
+    }
+  }
+
+  return query;
+}
+function matchRoute(context, route) {
+  var _extractGETParameters = extractGETParameters(clean(context.currentLocationPath)),
+      current = _extractGETParameters[0],
+      GETParams = _extractGETParameters[1];
+
+  var params = GETParams === "" ? null : parseQuery(GETParams);
+  var paramNames = [];
+  var pattern;
+
+  if (isString(route.path)) {
+    pattern = START_BY_SLASH_REGEXP + clean(route.path).replace(PARAMETER_REGEXP, function (full, dots, name) {
+      paramNames.push(name);
+      return REPLACE_VARIABLE_REGEXP;
+    }).replace(WILDCARD_REGEXP, REPLACE_WILDCARD).replace(NOT_SURE_REGEXP, REPLACE_NOT_SURE) + "$";
+
+    if (clean(route.path) === "") {
+      if (clean(current) === "") {
+        return {
+          url: current,
+          queryString: GETParams,
+          hashString: extractHashFromURL(context.to),
+          route: route,
+          data: null,
+          params: params
+        };
+      }
+    }
+  } else {
+    pattern = route.path;
+  }
+
+  var regexp = new RegExp(pattern, MATCH_REGEXP_FLAGS);
+  var match = current.match(regexp);
+
+  if (match) {
+    var data = isString(route.path) ? regExpResultToParams(match, paramNames) : match.groups ? match.groups : match.slice(1);
+    return {
+      url: clean(current.replace(new RegExp("^" + context.instance.root), "")),
+      queryString: GETParams,
+      hashString: extractHashFromURL(context.to),
+      route: route,
+      data: data,
+      params: params
+    };
+  }
+
+  return false;
+}
+function pushStateAvailable() {
+  return !!(typeof window !== "undefined" && window.history && window.history.pushState);
+}
+function undefinedOrTrue(obj, key) {
+  return typeof obj[key] === "undefined" || obj[key] === true;
+}
+function parseNavigateOptions(source) {
+  if (!source) return {};
+  var pairs = source.split(",");
+  var options = {};
+  var resolveOptions;
+  pairs.forEach(function (str) {
+    var temp = str.split(":").map(function (v) {
+      return v.replace(/(^ +| +$)/g, "");
+    });
+
+    switch (temp[0]) {
+      case "historyAPIMethod":
+        options.historyAPIMethod = temp[1];
+        break;
+
+      case "resolveOptionsStrategy":
+        if (!resolveOptions) resolveOptions = {};
+        resolveOptions.strategy = temp[1];
+        break;
+
+      case "resolveOptionsHash":
+        if (!resolveOptions) resolveOptions = {};
+        resolveOptions.hash = temp[1] === "true";
+        break;
+
+      case "updateBrowserURL":
+      case "callHandler":
+      case "updateState":
+      case "force":
+        options[temp[0]] = temp[1] === "true";
+        break;
+    }
+  });
+
+  if (resolveOptions) {
+    options.resolveOptions = resolveOptions;
+  }
+
+  return options;
+}
+function windowAvailable() {
+  return typeof window !== "undefined";
+}
+function accumulateHooks(hooks, result) {
+  if (hooks === void 0) {
+    hooks = [];
+  }
+
+  if (result === void 0) {
+    result = {};
+  }
+
+  hooks.filter(function (h) {
+    return h;
+  }).forEach(function (h) {
+    ["before", "after", "already", "leave"].forEach(function (type) {
+      if (h[type]) {
+        if (!result[type]) result[type] = [];
+        result[type].push(h[type]);
+      }
+    });
+  });
+  return result;
+}
+
+function Q(funcs, c, done) {
+  var context = c || {};
+  var idx = 0;
+
+  (function next() {
+    if (!funcs[idx]) {
+      if (done) {
+        done(context);
+      }
+
+      return;
+    }
+
+    if (Array.isArray(funcs[idx])) {
+      funcs.splice.apply(funcs, [idx, 1].concat(funcs[idx][0](context) ? funcs[idx][1] : funcs[idx][2]));
+      next();
+    } else {
+      // console.log(funcs[idx].name + " / " + JSON.stringify(context));
+      // console.log(funcs[idx].name);
+      funcs[idx](context, function (moveForward) {
+        if (typeof moveForward === "undefined" || moveForward === true) {
+          idx += 1;
+          next();
+        } else if (done) {
+          done(context);
+        }
+      });
+    }
+  })();
+}
+
+Q["if"] = function (condition, one, two) {
+  if (!Array.isArray(one)) one = [one];
+  if (!Array.isArray(two)) two = [two];
+  return [condition, one, two];
+};
+
+function setLocationPath(context, done) {
+  if (typeof context.currentLocationPath === "undefined") {
+    context.currentLocationPath = context.to = getCurrentEnvURL(context.instance.root);
+  }
+
+  context.currentLocationPath = context.instance._checkForAHash(context.currentLocationPath);
+  done();
+}
+
+function matchPathToRegisteredRoutes(context, done) {
+  for (var i = 0; i < context.instance.routes.length; i++) {
+    var route = context.instance.routes[i];
+    var match = matchRoute(context, route);
+
+    if (match) {
+      if (!context.matches) context.matches = [];
+      context.matches.push(match);
+
+      if (context.resolveOptions.strategy === "ONE") {
+        done();
+        return;
+      }
+    }
+  }
+
+  done();
+}
+
+function checkForDeprecationMethods(context, done) {
+  if (context.navigateOptions) {
+    if (typeof context.navigateOptions["shouldResolve"] !== "undefined") {
+      console.warn("\"shouldResolve\" is deprecated. Please check the documentation.");
+    }
+
+    if (typeof context.navigateOptions["silent"] !== "undefined") {
+      console.warn("\"silent\" is deprecated. Please check the documentation.");
+    }
+  }
+
+  done();
+}
+
+function checkForForceOp(context, done) {
+  if (context.navigateOptions.force === true) {
+    context.instance._setCurrent([context.instance._pathToMatchObject(context.to)]);
+
+    done(false);
+  } else {
+    done();
+  }
+}
+
+var isWindowAvailable = windowAvailable();
+var isPushStateAvailable = pushStateAvailable();
+function updateBrowserURL(context, done) {
+  if (undefinedOrTrue(context.navigateOptions, "updateBrowserURL")) {
+    var value = ("/" + context.to).replace(/\/\//g, "/"); // making sure that we don't have two slashes
+
+    var isItUsingHash = isWindowAvailable && context.resolveOptions && context.resolveOptions.hash === true;
+
+    if (isPushStateAvailable) {
+      history[context.navigateOptions.historyAPIMethod || "pushState"](context.navigateOptions.stateObj || {}, context.navigateOptions.title || "", isItUsingHash ? "#" + value : value); // This is to solve a nasty bug where the page doesn't scroll to the anchor.
+      // We set a microtask to update the hash only.
+
+      if (location && location.hash) {
+        context.instance.__freezeListening = true;
+        setTimeout(function () {
+          var tmp = location.hash;
+          location.hash = "";
+          location.hash = tmp;
+          context.instance.__freezeListening = false;
+        }, 1);
+      }
+    } else if (isWindowAvailable) {
+      window.location.href = context.to;
+    }
+  }
+
+  done();
+}
+
+function checkForLeaveHook(context, done) {
+  var instance = context.instance;
+
+  if (!instance.lastResolved()) {
+    done();
+    return;
+  }
+
+  Q(instance.lastResolved().map(function (oldMatch) {
+    return function (_, leaveLoopDone) {
+      // no leave hook
+      if (!oldMatch.route.hooks || !oldMatch.route.hooks.leave) {
+        leaveLoopDone();
+        return;
+      }
+
+      var runHook = false;
+      var newLocationVSOldMatch = context.instance.matchLocation(oldMatch.route.path, context.currentLocationPath, false);
+
+      if (oldMatch.route.path !== "*") {
+        runHook = !newLocationVSOldMatch;
+      } else {
+        var someOfTheLastOnesMatch = context.matches ? context.matches.find(function (match) {
+          return oldMatch.route.path === match.route.path;
+        }) : false;
+        runHook = !someOfTheLastOnesMatch;
+      }
+
+      if (undefinedOrTrue(context.navigateOptions, "callHooks") && runHook) {
+        Q(oldMatch.route.hooks.leave.map(function (f) {
+          // just so we match the Q interface
+          return function (_, d) {
+            return f(function (shouldStop) {
+              if (shouldStop === false) {
+                context.instance.__dirty = false;
+              } else {
+                d();
+              }
+            }, context.matches && context.matches.length > 0 ? context.matches.length === 1 ? context.matches[0] : context.matches : undefined);
+          };
+        }).concat([function () {
+          return leaveLoopDone();
+        }]));
+        return;
+      } else {
+        leaveLoopDone();
+      }
+    };
+  }), {}, function () {
+    return done();
+  });
+}
+
+function checkForBeforeHook(context, done) {
+  if (context.match.route.hooks && context.match.route.hooks.before && undefinedOrTrue(context.navigateOptions, "callHooks")) {
+    Q(context.match.route.hooks.before.map(function (f) {
+      // just so we match the Q interface
+      return function beforeHookInternal(_, d) {
+        return f(function (shouldStop) {
+          if (shouldStop === false) {
+            context.instance.__dirty = false;
+          } else {
+            d();
+          }
+        }, context.match);
+      };
+    }).concat([function () {
+      return done();
+    }]));
+  } else {
+    done();
+  }
+}
+
+function callHandler(context, done) {
+  if (undefinedOrTrue(context.navigateOptions, "callHandler")) {
+    context.match.route.handler(context.match);
+  }
+
+  context.instance.updatePageLinks();
+  done();
+}
+
+function checkForAfterHook(context, done) {
+  if (context.match.route.hooks && context.match.route.hooks.after && undefinedOrTrue(context.navigateOptions, "callHooks")) {
+    context.match.route.hooks.after.forEach(function (f) {
+      return f(context.match);
+    });
+  }
+
+  done();
+}
+
+function checkForAlreadyHook(context, done) {
+  var current = context.instance.lastResolved();
+
+  if (current && current[0] && current[0].route === context.match.route && current[0].url === context.match.url && current[0].queryString === context.match.queryString) {
+    current.forEach(function (c) {
+      if (c.route.hooks && c.route.hooks.already) {
+        if (undefinedOrTrue(context.navigateOptions, "callHooks")) {
+          c.route.hooks.already.forEach(function (f) {
+            return f(context.match);
+          });
+        }
+      }
+    });
+    done(false);
+    return;
+  }
+
+  done();
+}
+
+function checkForNotFoundHandler(context, done) {
+  var notFoundRoute = context.instance._notFoundRoute;
+
+  if (notFoundRoute) {
+    context.notFoundHandled = true;
+
+    var _extractGETParameters = extractGETParameters(context.currentLocationPath),
+        url = _extractGETParameters[0],
+        queryString = _extractGETParameters[1];
+
+    var hashString = extractHashFromURL(context.to);
+    notFoundRoute.path = clean(url);
+    var notFoundMatch = {
+      url: notFoundRoute.path,
+      queryString: queryString,
+      hashString: hashString,
+      data: null,
+      route: notFoundRoute,
+      params: queryString !== "" ? parseQuery(queryString) : null
+    };
+    context.matches = [notFoundMatch];
+    context.match = notFoundMatch;
+  }
+
+  done();
+}
+
+function errorOut(context, done) {
+  if (!context.resolveOptions || context.resolveOptions.noMatchWarning === false || typeof context.resolveOptions.noMatchWarning === "undefined") console.warn("Navigo: \"" + context.currentLocationPath + "\" didn't match any of the registered routes.");
+  done();
+}
+
+function flushCurrent(context, done) {
+  context.instance._setCurrent(null);
+
+  done();
+}
+
+function updateState(context, done) {
+  if (undefinedOrTrue(context.navigateOptions, "updateState")) {
+    context.instance._setCurrent(context.matches);
+  }
+
+  done();
+}
+
+var foundLifecycle = [checkForAlreadyHook, checkForBeforeHook, callHandler, checkForAfterHook];
+var notFoundLifeCycle = [checkForLeaveHook, checkForNotFoundHandler, Q["if"](function (_ref) {
+  var notFoundHandled = _ref.notFoundHandled;
+  return notFoundHandled;
+}, foundLifecycle.concat([updateState]), [errorOut, flushCurrent])];
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+function processMatches(context, done) {
+  var idx = 0;
+
+  function nextMatch() {
+    if (idx === context.matches.length) {
+      updateState(context, done);
+      return;
+    }
+
+    Q(foundLifecycle, _extends({}, context, {
+      match: context.matches[idx]
+    }), function end() {
+      idx += 1;
+      nextMatch();
+    });
+  }
+
+  checkForLeaveHook(context, nextMatch);
+}
+
+function waitingList(context) {
+  context.instance.__dirty = false;
+
+  if (context.instance.__waiting.length > 0) {
+    context.instance.__waiting.shift()();
+  }
+}
+
+function _extends$1() { _extends$1 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends$1.apply(this, arguments); }
+function Navigo(appRoute, resolveOptions) {
+  var DEFAULT_RESOLVE_OPTIONS = resolveOptions || {
+    strategy: "ONE",
+    hash: false,
+    noMatchWarning: false
+  };
+  var self = this;
+  var root = "/";
+  var current = null;
+  var routes = [];
+  var destroyed = false;
+  var genericHooks;
+  var isPushStateAvailable = pushStateAvailable();
+  var isWindowAvailable = windowAvailable();
+
+  if (!appRoute) {
+    console.warn('Navigo requires a root path in its constructor. If not provided will use "/" as default.');
+  } else {
+    root = clean(appRoute);
+  }
+
+  function _checkForAHash(url) {
+    if (url.indexOf("#") >= 0) {
+      if (DEFAULT_RESOLVE_OPTIONS.hash === true) {
+        url = url.split("#")[1] || "/";
+      } else {
+        url = url.split("#")[0];
+      }
+    }
+
+    return url;
+  }
+
+  function composePathWithRoot(path) {
+    return clean(root + "/" + clean(path));
+  }
+
+  function createRoute(path, handler, hooks, name) {
+    path = isString(path) ? composePathWithRoot(path) : path;
+    return {
+      name: name || clean(String(path)),
+      path: path,
+      handler: handler,
+      hooks: accumulateHooks(hooks)
+    };
+  } // public APIs
+
+
+  function on(path, handler, hooks) {
+    var _this = this;
+
+    if (typeof path === "object" && !(path instanceof RegExp)) {
+      Object.keys(path).forEach(function (p) {
+        if (typeof path[p] === "function") {
+          _this.on(p, path[p]);
+        } else {
+          var _path$p = path[p],
+              _handler = _path$p.uses,
+              name = _path$p.as,
+              _hooks = _path$p.hooks;
+          routes.push(createRoute(p, _handler, [genericHooks, _hooks], name));
+        }
+      });
+      return this;
+    } else if (typeof path === "function") {
+      hooks = handler;
+      handler = path;
+      path = root;
+    }
+
+    routes.push(createRoute(path, handler, [genericHooks, hooks]));
+    return this;
+  }
+
+  function resolve(to, options) {
+    if (self.__dirty) {
+      self.__waiting.push(function () {
+        return self.resolve(to, options);
+      });
+
+      return;
+    } else {
+      self.__dirty = true;
+    }
+
+    to = to ? clean(root) + "/" + clean(to) : undefined; // console.log("-- resolve --> " + to, self.__dirty);
+
+    var context = {
+      instance: self,
+      to: to,
+      currentLocationPath: to,
+      navigateOptions: {},
+      resolveOptions: _extends$1({}, DEFAULT_RESOLVE_OPTIONS, options)
+    };
+    Q([setLocationPath, matchPathToRegisteredRoutes, Q["if"](function (_ref) {
+      var matches = _ref.matches;
+      return matches && matches.length > 0;
+    }, processMatches, notFoundLifeCycle)], context, waitingList);
+    return context.matches ? context.matches : false;
+  }
+
+  function navigate(to, navigateOptions) {
+    // console.log("-- navigate --> " + to, self.__dirty);
+    if (self.__dirty) {
+      self.__waiting.push(function () {
+        return self.navigate(to, navigateOptions);
+      });
+
+      return;
+    } else {
+      self.__dirty = true;
+    }
+
+    to = clean(root) + "/" + clean(to);
+    var context = {
+      instance: self,
+      to: to,
+      navigateOptions: navigateOptions || {},
+      resolveOptions: navigateOptions && navigateOptions.resolveOptions ? navigateOptions.resolveOptions : DEFAULT_RESOLVE_OPTIONS,
+      currentLocationPath: _checkForAHash(to)
+    };
+    Q([checkForDeprecationMethods, checkForForceOp, matchPathToRegisteredRoutes, Q["if"](function (_ref2) {
+      var matches = _ref2.matches;
+      return matches && matches.length > 0;
+    }, processMatches, notFoundLifeCycle), updateBrowserURL, waitingList], context, waitingList);
+  }
+
+  function navigateByName(name, data, options) {
+    var url = generate(name, data);
+
+    if (url !== null) {
+      navigate(url, options);
+      return true;
+    }
+
+    return false;
+  }
+
+  function off(what) {
+    this.routes = routes = routes.filter(function (r) {
+      if (isString(what)) {
+        return clean(r.path) !== clean(what);
+      } else if (isFunction(what)) {
+        return what !== r.handler;
+      }
+
+      return String(r.path) !== String(what);
+    });
+    return this;
+  }
+
+  function listen() {
+    if (isPushStateAvailable) {
+      this.__popstateListener = function () {
+        if (!self.__freezeListening) {
+          resolve();
+        }
+      };
+
+      window.addEventListener("popstate", this.__popstateListener);
+    }
+  }
+
+  function destroy() {
+    this.routes = routes = [];
+
+    if (isPushStateAvailable) {
+      window.removeEventListener("popstate", this.__popstateListener);
+    }
+
+    this.destroyed = destroyed = true;
+  }
+
+  function notFound(handler, hooks) {
+    self._notFoundRoute = createRoute("*", handler, [genericHooks, hooks], "__NOT_FOUND__");
+    return this;
+  }
+
+  function updatePageLinks() {
+    if (!isWindowAvailable) return;
+    findLinks().forEach(function (link) {
+      if ("false" === link.getAttribute("data-navigo") || "_blank" === link.getAttribute("target")) {
+        if (link.hasListenerAttached) {
+          link.removeEventListener("click", link.navigoHandler);
+        }
+
+        return;
+      }
+
+      if (!link.hasListenerAttached) {
+        link.hasListenerAttached = true;
+
+        link.navigoHandler = function (e) {
+          if ((e.ctrlKey || e.metaKey) && e.target.tagName.toLowerCase() === "a") {
+            return false;
+          }
+
+          var location = link.getAttribute("href");
+
+          if (typeof location === "undefined" || location === null) {
+            return false;
+          } // handling absolute paths
+
+
+          if (location.match(/^(http|https)/) && typeof URL !== "undefined") {
+            try {
+              var u = new URL(location);
+              location = u.pathname + u.search;
+            } catch (err) {}
+          }
+
+          var options = parseNavigateOptions(link.getAttribute("data-navigo-options"));
+
+          if (!destroyed) {
+            e.preventDefault();
+            e.stopPropagation();
+            self.navigate(clean(location), options);
+          }
+        };
+
+        link.addEventListener("click", link.navigoHandler);
+      }
+    });
+    return self;
+  }
+
+  function findLinks() {
+    if (isWindowAvailable) {
+      return [].slice.call(document.querySelectorAll("[data-navigo]"));
+    }
+
+    return [];
+  }
+
+  function link(path) {
+    return "/" + root + "/" + clean(path);
+  }
+
+  function setGenericHooks(hooks) {
+    genericHooks = hooks;
+    return this;
+  }
+
+  function lastResolved() {
+    return current;
+  }
+
+  function generate(name, data) {
+    var route = routes.find(function (r) {
+      return r.name === name;
+    });
+
+    if (route) {
+      var result = route.path;
+
+      if (data) {
+        for (var key in data) {
+          result = result.replace(":" + key, data[key]);
+        }
+      }
+
+      return !result.match(/^\//) ? "/" + result : result;
+    }
+
+    return null;
+  }
+
+  function getLinkPath(link) {
+    return link.getAttribute("href");
+  }
+
+  function pathToMatchObject(path) {
+    var _extractGETParameters = extractGETParameters(clean(path)),
+        url = _extractGETParameters[0],
+        queryString = _extractGETParameters[1];
+
+    var params = queryString === "" ? null : parseQuery(queryString);
+    var hashString = extractHashFromURL(path);
+    var route = createRoute(url, function () {}, [genericHooks], url);
+    return {
+      url: url,
+      queryString: queryString,
+      hashString: hashString,
+      route: route,
+      data: null,
+      params: params
+    };
+  }
+
+  function getCurrentLocation() {
+    return pathToMatchObject(clean(getCurrentEnvURL(root)).replace(new RegExp("^" + root), ""));
+  }
+
+  function directMatchWithRegisteredRoutes(path) {
+    var context = {
+      instance: self,
+      currentLocationPath: path,
+      to: path,
+      navigateOptions: {},
+      resolveOptions: DEFAULT_RESOLVE_OPTIONS
+    };
+    matchPathToRegisteredRoutes(context, function () {});
+    return context.matches ? context.matches : false;
+  }
+
+  function directMatchWithLocation(path, currentLocation, annotatePathWithRoot) {
+    if (typeof currentLocation !== "undefined" && (typeof annotatePathWithRoot === "undefined" || annotatePathWithRoot)) {
+      currentLocation = composePathWithRoot(currentLocation);
+    }
+
+    var context = {
+      instance: self,
+      to: currentLocation,
+      currentLocationPath: currentLocation
+    };
+    setLocationPath(context, function () {});
+
+    if (typeof path === "string") {
+      path = typeof annotatePathWithRoot === "undefined" || annotatePathWithRoot ? composePathWithRoot(path) : path;
+    }
+
+    var match = matchRoute(context, {
+      name: String(path),
+      path: path,
+      handler: function handler() {},
+      hooks: {}
+    });
+    return match ? match : false;
+  }
+
+  function addHook(type, route, func) {
+    if (typeof route === "string") {
+      route = getRoute(route);
+    }
+
+    if (route) {
+      if (!route.hooks[type]) route.hooks[type] = [];
+      route.hooks[type].push(func);
+      return function () {
+        route.hooks[type] = route.hooks[type].filter(function (f) {
+          return f !== func;
+        });
+      };
+    } else {
+      console.warn("Route doesn't exists: " + route);
+    }
+
+    return function () {};
+  }
+
+  function getRoute(nameOrHandler) {
+    if (typeof nameOrHandler === "string") {
+      return routes.find(function (r) {
+        return r.name === composePathWithRoot(nameOrHandler);
+      });
+    }
+
+    return routes.find(function (r) {
+      return r.handler === nameOrHandler;
+    });
+  }
+
+  this.root = root;
+  this.routes = routes;
+  this.destroyed = destroyed;
+  this.current = current;
+  this.__freezeListening = false;
+  this.__waiting = [];
+  this.__dirty = false;
+  this.on = on;
+  this.off = off;
+  this.resolve = resolve;
+  this.navigate = navigate;
+  this.navigateByName = navigateByName;
+  this.destroy = destroy;
+  this.notFound = notFound;
+  this.updatePageLinks = updatePageLinks;
+  this.link = link;
+  this.hooks = setGenericHooks;
+
+  this.extractGETParameters = function (url) {
+    return extractGETParameters(_checkForAHash(url));
+  };
+
+  this.lastResolved = lastResolved;
+  this.generate = generate;
+  this.getLinkPath = getLinkPath;
+  this.match = directMatchWithRegisteredRoutes;
+  this.matchLocation = directMatchWithLocation;
+  this.getCurrentLocation = getCurrentLocation;
+  this.addBeforeHook = addHook.bind(this, "before");
+  this.addAfterHook = addHook.bind(this, "after");
+  this.addAlreadyHook = addHook.bind(this, "already");
+  this.addLeaveHook = addHook.bind(this, "leave");
+  this.getRoute = getRoute;
+  this._pathToMatchObject = pathToMatchObject;
+  this._clean = clean;
+  this._checkForAHash = _checkForAHash;
+
+  this._setCurrent = function (c) {
+    return current = self.current = c;
+  };
+
+  listen.call(this);
+  updatePageLinks.call(this);
+}
+
 /**
  * vis-data
  * http://visjs.org/
@@ -3417,8 +4326,8 @@ var componentEmitter = createCommonjsModule(function (module) {
  * Forked By Naver egjs
  * Copyright (c) hammerjs
  * Licensed under the MIT license */
-function _extends() {
-  _extends = Object.assign || function (target) {
+function _extends$2() {
+  _extends$2 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
 
@@ -3432,7 +4341,7 @@ function _extends() {
     return target;
   };
 
-  return _extends.apply(this, arguments);
+  return _extends$2.apply(this, arguments);
 }
 
 function _inheritsLoose(subClass, superClass) {
@@ -4855,7 +5764,7 @@ var Recognizer = /*#__PURE__*/function () {
       options = {};
     }
 
-    this.options = _extends({
+    this.options = _extends$2({
       enable: true
     }, options);
     this.id = uniqueId();
@@ -5146,7 +6055,7 @@ var TapRecognizer = /*#__PURE__*/function (_Recognizer) {
       options = {};
     }
 
-    _this = _Recognizer.call(this, _extends({
+    _this = _Recognizer.call(this, _extends$2({
       event: 'tap',
       pointers: 1,
       taps: 1,
@@ -5267,7 +6176,7 @@ var AttrRecognizer = /*#__PURE__*/function (_Recognizer) {
       options = {};
     }
 
-    return _Recognizer.call(this, _extends({
+    return _Recognizer.call(this, _extends$2({
       pointers: 1
     }, options)) || this;
   }
@@ -5358,7 +6267,7 @@ var PanRecognizer = /*#__PURE__*/function (_AttrRecognizer) {
       options = {};
     }
 
-    _this = _AttrRecognizer.call(this, _extends({
+    _this = _AttrRecognizer.call(this, _extends$2({
       event: 'pan',
       threshold: 10,
       pointers: 1,
@@ -5446,7 +6355,7 @@ var SwipeRecognizer = /*#__PURE__*/function (_AttrRecognizer) {
       options = {};
     }
 
-    return _AttrRecognizer.call(this, _extends({
+    return _AttrRecognizer.call(this, _extends$2({
       event: 'swipe',
       threshold: 10,
       velocity: 0.3,
@@ -5505,7 +6414,7 @@ var PinchRecognizer = /*#__PURE__*/function (_AttrRecognizer) {
       options = {};
     }
 
-    return _AttrRecognizer.call(this, _extends({
+    return _AttrRecognizer.call(this, _extends$2({
       event: 'pinch',
       threshold: 0,
       pointers: 2
@@ -5550,7 +6459,7 @@ var RotateRecognizer = /*#__PURE__*/function (_AttrRecognizer) {
       options = {};
     }
 
-    return _AttrRecognizer.call(this, _extends({
+    return _AttrRecognizer.call(this, _extends$2({
       event: 'rotate',
       threshold: 0,
       pointers: 2
@@ -5588,7 +6497,7 @@ var PressRecognizer = /*#__PURE__*/function (_Recognizer) {
       options = {};
     }
 
-    _this = _Recognizer.call(this, _extends({
+    _this = _Recognizer.call(this, _extends$2({
       event: 'press',
       pointers: 1,
       time: 251,
@@ -6302,7 +7211,7 @@ var Hammer = /*#__PURE__*/function () {
       options = {};
     }
 
-    return new Manager(element, _extends({
+    return new Manager(element, _extends$2({
       recognizers: preset.concat()
     }, options));
   };
@@ -14186,8 +15095,8 @@ var symbol$4$1 = symbol$3$1;
  * Forked By Naver egjs
  * Copyright (c) hammerjs
  * Licensed under the MIT license */
-function _extends$1() {
-  _extends$1 = Object.assign || function (target) {
+function _extends$3() {
+  _extends$3 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
 
@@ -14201,7 +15110,7 @@ function _extends$1() {
     return target;
   };
 
-  return _extends$1.apply(this, arguments);
+  return _extends$3.apply(this, arguments);
 }
 
 function _inheritsLoose$1(subClass, superClass) {
@@ -15624,7 +16533,7 @@ var Recognizer$1 = /*#__PURE__*/function () {
       options = {};
     }
 
-    this.options = _extends$1({
+    this.options = _extends$3({
       enable: true
     }, options);
     this.id = uniqueId$1();
@@ -15915,7 +16824,7 @@ var TapRecognizer$1 = /*#__PURE__*/function (_Recognizer) {
       options = {};
     }
 
-    _this = _Recognizer.call(this, _extends$1({
+    _this = _Recognizer.call(this, _extends$3({
       event: 'tap',
       pointers: 1,
       taps: 1,
@@ -16036,7 +16945,7 @@ var AttrRecognizer$1 = /*#__PURE__*/function (_Recognizer) {
       options = {};
     }
 
-    return _Recognizer.call(this, _extends$1({
+    return _Recognizer.call(this, _extends$3({
       pointers: 1
     }, options)) || this;
   }
@@ -16127,7 +17036,7 @@ var PanRecognizer$1 = /*#__PURE__*/function (_AttrRecognizer) {
       options = {};
     }
 
-    _this = _AttrRecognizer.call(this, _extends$1({
+    _this = _AttrRecognizer.call(this, _extends$3({
       event: 'pan',
       threshold: 10,
       pointers: 1,
@@ -16215,7 +17124,7 @@ var SwipeRecognizer$1 = /*#__PURE__*/function (_AttrRecognizer) {
       options = {};
     }
 
-    return _AttrRecognizer.call(this, _extends$1({
+    return _AttrRecognizer.call(this, _extends$3({
       event: 'swipe',
       threshold: 10,
       velocity: 0.3,
@@ -16274,7 +17183,7 @@ var PinchRecognizer$1 = /*#__PURE__*/function (_AttrRecognizer) {
       options = {};
     }
 
-    return _AttrRecognizer.call(this, _extends$1({
+    return _AttrRecognizer.call(this, _extends$3({
       event: 'pinch',
       threshold: 0,
       pointers: 2
@@ -16319,7 +17228,7 @@ var RotateRecognizer$1 = /*#__PURE__*/function (_AttrRecognizer) {
       options = {};
     }
 
-    return _AttrRecognizer.call(this, _extends$1({
+    return _AttrRecognizer.call(this, _extends$3({
       event: 'rotate',
       threshold: 0,
       pointers: 2
@@ -16357,7 +17266,7 @@ var PressRecognizer$1 = /*#__PURE__*/function (_Recognizer) {
       options = {};
     }
 
-    _this = _Recognizer.call(this, _extends$1({
+    _this = _Recognizer.call(this, _extends$3({
       event: 'press',
       pointers: 1,
       time: 251,
@@ -17071,7 +17980,7 @@ var Hammer$2 = /*#__PURE__*/function () {
       options = {};
     }
 
-    return new Manager$1(element, _extends$1({
+    return new Manager$1(element, _extends$3({
       recognizers: preset$1.concat()
     }, options));
   };
@@ -17517,7 +18426,7 @@ function recursiveDOMDelete(DOMobject) {
  */
 
 
-function isString(value) {
+function isString$1(value) {
   return value instanceof String || typeof value === "string";
 }
 /**
@@ -17968,7 +18877,7 @@ function RGBToHex(red, green, blue) {
 
 
 function parseColor(inputColor, defaultColor) {
-  if (isString(inputColor)) {
+  if (isString$1(inputColor)) {
     var colorStr = inputColor;
 
     if (isValidRGB(colorStr)) {
@@ -18026,14 +18935,14 @@ function parseColor(inputColor, defaultColor) {
       var color = {
         background: inputColor.background || defaultColor.background,
         border: inputColor.border || defaultColor.border,
-        highlight: isString(inputColor.highlight) ? {
+        highlight: isString$1(inputColor.highlight) ? {
           border: inputColor.highlight,
           background: inputColor.highlight
         } : {
           background: inputColor.highlight && inputColor.highlight.background || defaultColor.highlight.background,
           border: inputColor.highlight && inputColor.highlight.border || defaultColor.highlight.border
         },
-        hover: isString(inputColor.hover) ? {
+        hover: isString$1(inputColor.hover) ? {
           border: inputColor.hover,
           background: inputColor.hover
         } : {
@@ -18046,14 +18955,14 @@ function parseColor(inputColor, defaultColor) {
       var _color = {
         background: inputColor.background || undefined,
         border: inputColor.border || undefined,
-        highlight: isString(inputColor.highlight) ? {
+        highlight: isString$1(inputColor.highlight) ? {
           border: inputColor.highlight,
           background: inputColor.highlight
         } : {
           background: inputColor.highlight && inputColor.highlight.background || undefined,
           border: inputColor.highlight && inputColor.highlight.border || undefined
         },
-        hover: isString(inputColor.hover) ? {
+        hover: isString$1(inputColor.hover) ? {
           border: inputColor.hover,
           background: inputColor.hover
         } : {
@@ -18889,7 +19798,7 @@ var ColorPicker = /*#__PURE__*/function () {
       } // check format
 
 
-      if (isString(color) === true) {
+      if (isString$1(color) === true) {
         if (isValidRGB(color) === true) {
           var rgbaArray = color.substr(4).substr(0, color.length - 5).split(",");
           rgba = {
@@ -33030,7 +33939,7 @@ var Edge = /*#__PURE__*/function () {
 
 
       if (newOptions.color !== undefined && newOptions.color !== null) {
-        var fromColor = isString(newOptions.color) ? {
+        var fromColor = isString$1(newOptions.color) ? {
           color: newOptions.color,
           highlight: newOptions.color,
           hover: newOptions.color,
@@ -33050,7 +33959,7 @@ var Edge = /*#__PURE__*/function () {
           }
         }
 
-        if (isString(toColor)) {
+        if (isString$1(toColor)) {
           toColor.color = toColor;
           toColor.highlight = toColor;
           toColor.hover = toColor;
@@ -49917,39 +50826,52 @@ const createNotesNetwork = async options => {
 const createApp = async ({
   notes
 }) => {
-  const container = document.getElementById('network');
   const appMain = document.getElementById('app-main');
-  const button = document.querySelector('.button');
-  const pageTitle = document.getElementById('page-title');
-  const pageContent = document.getElementById('page-content');
-  if (!button || !appMain || !container) return;
   const homeHTML = appMain.innerHTML;
-  button.addEventListener('click', () => {
-    if (appMain.classList.contains('app__main--notes')) {
-      appMain.classList.remove('app__main--notes');
-      appMain.innerHTML = homeHTML;
+  const router = new Navigo('/');
+  const network = await createNotesNetwork({
+    notes,
+    container: document.getElementById('network')
+  });
+  const noteIdToNote = mapBy(notes.nodes, 'id');
+  router.on('/', () => {
+    appMain.classList.remove('app__main--notes');
+    appMain.innerHTML = homeHTML;
+  });
+  router.on('/notes', () => {
+    appMain.classList.toggle('app__main--notes', true);
+    appMain.innerHTML = homeHTML;
+  });
+  router.on('/notes/:id', ({
+    data
+  }) => {
+    appMain.classList.toggle('app__main--notes', true);
+    if (!data) throw new Error('Note not found.');
+    const note = noteIdToNote[data.id];
+    if (!note) throw new Error(`Note not found. ID: "${data.id}"`);
+
+    if (data) {
+      network.selectNodes([data.id]);
+    }
+
+    const pageTitle = document.getElementById('page-title');
+    const pageContent = document.getElementById('page-content');
+    if (!pageTitle || !pageContent) throw new Error('Elements not found');
+    pageTitle.innerHTML = note.label;
+    pageContent.innerHTML = note.bodyHtml;
+  });
+  document.getElementById('notes-trigger')?.addEventListener('click', () => {
+    if (router.getCurrentLocation().route.path === '') {
+      const selectedNotes = network.getSelectedNodes();
+      router.navigate(selectedNotes[0] ? `/notes/${selectedNotes[0]}` : '/notes');
       return;
     }
 
-    appMain.classList.add('app__main--notes');
+    router.navigate('');
   });
-  const network = await createNotesNetwork({
-    notes,
-    container
-  });
-  const noteIdToNote = mapBy(notes.nodes, 'id');
-  network.on('selectNode', params => {
-    const note = noteIdToNote[params.nodes[0]];
-    console.warn({
-      note
-    });
-    if (!note) throw new Error(`Note not found. ID: "${params.nodes[0]}"`);
-    console.warn({
-      pageTitle
-    });
-    if (pageTitle) pageTitle.innerHTML = note.label;
-    if (pageContent) pageContent.innerHTML = note.bodyHtml;
-  });
+  network.on('selectNode', ({
+    nodes
+  }) => router.navigate(`/notes/${nodes[0]}`));
 };
 
 function mapBy(array, key) {

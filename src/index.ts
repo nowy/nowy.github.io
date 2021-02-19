@@ -1,37 +1,59 @@
+import Navigo from 'navigo';
 import { createNotesNetwork, NotesNetwork } from './notes-network';
 
 export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
-  const container = document.getElementById('network')
-  const appMain = document.getElementById('app-main')
-  const button = document.querySelector('.button')
-  const pageTitle = document.getElementById('page-title')
-  const pageContent = document.getElementById('page-content')
-
-  if (!button || !appMain || !container) return
-
+  const appMain = document.getElementById('app-main') as HTMLElement
   const homeHTML = appMain.innerHTML
 
-  button.addEventListener('click', () => {
-    if (appMain.classList.contains('app__main--notes')) {
-      appMain.classList.remove('app__main--notes')
-      appMain.innerHTML = homeHTML
-      return
-    }
-  
-    appMain.classList.add('app__main--notes')
+  const router = new Navigo('/')
+  const network = await createNotesNetwork({
+    notes,
+    container: document.getElementById('network') as HTMLElement
   })
-
-  const network = await createNotesNetwork({ notes, container })
   const noteIdToNote = mapBy(notes.nodes, 'id')
 
-  network.on('selectNode', (params) => {
-    const note = noteIdToNote[params.nodes[0]]
-    console.warn({note})
-    if (!note) throw new Error(`Note not found. ID: "${params.nodes[0]}"`)
-    console.warn({pageTitle})
-    if (pageTitle) pageTitle.innerHTML = note.label
-    if (pageContent) pageContent.innerHTML = note.bodyHtml
+  router.on('/', () => {
+    appMain.classList.remove('app__main--notes')
+    appMain.innerHTML = homeHTML
   })
+
+  router.on('/notes', () => {
+    appMain.classList.toggle('app__main--notes', true)
+    appMain.innerHTML = homeHTML
+  })
+
+  router.on('/notes/:id', ({ data }) => {
+    appMain.classList.toggle('app__main--notes', true)
+    if (!data) throw new Error('Note not found.')
+
+    const note = noteIdToNote[data.id]
+
+    if (!note) throw new Error(`Note not found. ID: "${data.id}"`)
+
+    if (data) {
+      network.selectNodes([data.id])
+    }
+
+    const pageTitle = document.getElementById('page-title')
+    const pageContent = document.getElementById('page-content')
+
+    if (!pageTitle || !pageContent) throw new Error('Elements not found')
+  
+    pageTitle.innerHTML = note.label
+    pageContent.innerHTML = note.bodyHtml
+  })
+
+  document.getElementById('notes-trigger')?.addEventListener('click', () => {
+    if (router.getCurrentLocation().route.path === '') {
+      const selectedNotes = network.getSelectedNodes()
+      router.navigate(selectedNotes[0] ? `/notes/${selectedNotes[0]}` : '/notes')
+      return
+    }
+
+    router.navigate('')
+  })
+
+  network.on('selectNode', ({ nodes }) => router.navigate(`/notes/${nodes[0]}`))
 }
 
 function mapBy<T, K extends keyof T>(array: T[], key: K): Record<string, T> {

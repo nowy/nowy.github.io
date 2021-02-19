@@ -6,6 +6,7 @@ export function render (data) {
   return `<div class="app__gutter"></div>
   <div class="app__main">
     <section class="content">
+      <a href="/" class="content__back" data-navigo>< Go to main page</a>
       <h1>${data.title}</h1>
       <time>${this.pageDate(data)}</time>
       ${data.content}

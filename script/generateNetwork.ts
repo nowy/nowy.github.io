@@ -19,9 +19,15 @@ const classMap = {
 const replaceClassNames: ShowdownExtension[] = Object.keys(classMap)
   .map(key => ({
     type: 'output',
-    regex: new RegExp(`<${key}(.*)>`, 'g'),
+    regex: new RegExp(`<${key}([^a-z]*)>`, 'g'),
     replace: `<${key} class="${classMap[key as keyof typeof classMap]}" $1>`
   }))
+
+const replaceMdLinks: ShowdownExtension = {
+  type: 'lang',
+  regex: /\[\[(\d+)\s?(.*?)\]\]/g,
+  replace: (_: any, id: string, label: string) => `<a href="/notes/${id}" data-navigo>${label.split('|')[0].split('#')[0]}</a>`
+}
 
 const removeSquareBrackets = (s: string) => s.replace(/[\[\]']+/g, '')
 const getId = (f: string) => {
@@ -32,7 +38,11 @@ const getId = (f: string) => {
 (async () => {
   await fs.promises.mkdir(output.dir, { recursive: true })
 
-  const mdConverter = new Converter({ metadata: true, extensions: [...replaceClassNames] })
+  const mdConverter = new Converter({
+    metadata: true,
+    extensions: [replaceMdLinks, ...replaceClassNames]
+  })
+
   const files = await fs.promises.readdir(input.dir)
 
   const nodes = await Promise.all(files.map(async fileName => {

@@ -1,6 +1,6 @@
 ---
 layout: layouts/home
-tags: ['home', 'nav']
+tags: ['home']
 weight: 1
 permalink: '/'
 ---

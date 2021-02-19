@@ -11,7 +11,9 @@ export function render() {
   return `<div class="app__main">
     <section class="content">
       <h1 class="intro">Not found</h1>
-      <p class="hero-text">This site has about 4 pages, and you've missed every single one of them. <a href="/">Return to the home page</a>.</p>
+      <p class="hero-text">
+        If you're looking for one of my /notes - SSR is still underway. Please hold. <a href="/">Return to the home page</a>.
+      </p>
     </section>
   </div>
   <div class="app__gutter"></div>
