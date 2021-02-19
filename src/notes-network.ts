@@ -4,6 +4,8 @@ export interface NotesNetwork {
   nodes: {
     id: number
     label: string
+    bodyHtml: string
+    linksTo: number[]
     metaData: Record<string, string[]>
   }[]
   edges: { source: number, target: number }[]

@@ -8,7 +8,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy('style')
   eleventyConfig.addPassthroughCopy('img')
   eleventyConfig.addPassthroughCopy({
-    'dist/bundle.js': 'assets/notes-network.js',
+    'dist/bundle.js': 'assets/bundle.js',
   })
 
   eleventyConfig.addWatchTarget('./**/*.css')

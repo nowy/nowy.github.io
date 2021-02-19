@@ -7,7 +7,7 @@
     "generate:network": "ts-node --project script/tsconfig.json script/generateNetwork.ts",
     "build:assets": "rollup --config",
     "build": "concurrently \"npm run generate:network\" \"npm run build:assets\" \"ELEVENTY_ENV=production node -r esm node_modules/.bin/eleventy\"",
-    "serve": "ELEVENTY_ENV=development node -r esm node_modules/.bin/eleventy --serve",
+    "serve": "concurrently \"rollup --config --watch\" \"ELEVENTY_ENV=development node -r esm node_modules/.bin/eleventy --serve\"",
     "debug": "DEBUG=* node -r esm node_modules/.bin/eleventy"
   },
   "repository": {

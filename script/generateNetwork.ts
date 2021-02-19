@@ -1,6 +1,7 @@
 import * as path from "path";
 import fs from 'fs';
-import { Converter, Metadata } from 'showdown';
+import { Converter, Metadata, ShowdownExtension } from 'showdown';
+import { SSL_OP_NO_TICKET } from "constants";
 
 const input = {
   dir: path.join(__dirname, '..', '_notes'),
@@ -11,6 +12,17 @@ const output = {
   file: 'notes.json',
 }
 
+const classMap = {
+  p: 'hero-text'
+}
+
+const replaceClassNames: ShowdownExtension[] = Object.keys(classMap)
+  .map(key => ({
+    type: 'output',
+    regex: new RegExp(`<${key}(.*)>`, 'g'),
+    replace: `<${key} class="${classMap[key as keyof typeof classMap]}" $1>`
+  }))
+
 const removeSquareBrackets = (s: string) => s.replace(/[\[\]']+/g, '')
 const getId = (f: string) => {
   const parsedId = parseInt(f.split(' ')[0])
@@ -20,7 +32,7 @@ const getId = (f: string) => {
 (async () => {
   await fs.promises.mkdir(output.dir, { recursive: true })
 
-  const mdConverter = new Converter({ metadata: true })
+  const mdConverter = new Converter({ metadata: true, extensions: [...replaceClassNames] })
   const files = await fs.promises.readdir(input.dir)
 
   const nodes = await Promise.all(files.map(async fileName => {
@@ -30,8 +42,17 @@ const getId = (f: string) => {
     )
 
     return {
+      bodyHtml: mdConverter.makeHtml((() => {
+        const bodySplitByLine = fileContent.split('\n')
+        const linksIndex = bodySplitByLine.findIndex(l => l.startsWith('## Links'))
+        const refsIndex = bodySplitByLine.findIndex(l => l.startsWith('## Links'))
+  
+        return bodySplitByLine
+          .slice(0, linksIndex !== -1 ? linksIndex : refsIndex !== -1 ? refsIndex : bodySplitByLine.length + 1)
+          .filter(t => !t.startsWith('# '))
+          .join('\n')
+      })()),
       id: getId(fileName),
-      html: mdConverter.makeHtml(fileContent),
       metaData: Object.fromEntries(
         Object.entries(mdConverter.getMetadata(false) as Metadata).map(([key, entry]) => [
           key,

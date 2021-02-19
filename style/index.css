@@ -113,11 +113,14 @@ p:last-child {
 .app__main {
   display: flex;
   flex-direction: column;
+  height: 100vh;
   width: 100%;
-  padding: 0 20px 50px;
+  padding: 0 70px 50px 50px;
   min-width: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
-  margin: 0 50px;
+  margin: 0 auto;
   flex: 0 1 650px;
   transition: flex 180ms ease-out;
   order: 2;
@@ -178,6 +181,10 @@ h1 {
   font-weight: 500;
   line-height: var(--font-size-xl); */
   /* margin: 0 0 30px; */
+}
+
+img {
+  max-width: 100%;
 }
 
 .button {

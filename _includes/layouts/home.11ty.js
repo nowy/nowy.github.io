@@ -4,14 +4,16 @@ export const data = {
 
 export function render(data) {
   return `
-  <div class="app__main">
+  <div class="app__main" id="app-main">
     <section class="content">
-      <h1 class="intro">Noel Varanda</h1>
-      <p class="hero-text">
-        I'm no designer, but I reckon I need at least three lines of text to make this paragraph "fit in". Read some of my content below
-        or get in touch using some of the links above. Nailed it.
-      </p>
-      ${this.archive(data, [...data.collections.posts].reverse())}
+      <h1 id="page-title" class="intro">Noel Varanda</h1>
+      <div id="page-content">
+        <p class="hero-text">
+          I'm no designer, but I reckon I need at least three lines of text to make this paragraph "fit in". Read some of my content below
+          or get in touch using some of the links above. Nailed it.
+        </p>
+        ${this.archive(data, [...data.collections.posts].reverse())}
+      </div>
     </section>
   </div>
   <div class="app__gutter"></div>
