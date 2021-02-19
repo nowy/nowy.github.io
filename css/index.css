@@ -137,10 +137,6 @@ p:last-child {
   opacity: 1;
 }
 
-.app__main--notes ~ .app__brain .app__brain-description {
-  display: none;
-}
-
 .app__main--notes ~ .app__brain .app__brain-trigger,
 .app__brain-trigger:hover,
 .app__brain-trigger:focus {
@@ -150,6 +146,10 @@ p:last-child {
 .app__brain-trigger:hover ~ .app__brain-description,
 .app__brain-trigger:focus ~ .app__brain-description {
   display: block;
+}
+
+.app__main--notes ~ .app__brain .app__brain-description {
+  display: none;
 }
 
 .app__main--notes .app__brain-network,

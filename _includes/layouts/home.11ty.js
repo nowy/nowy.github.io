@@ -37,11 +37,12 @@ export function render(data) {
       appMain.classList.add('app__main--notes')
     });
 
-    console.warn('FIRED')
-    const network = createNotesNetwork({
-      container: document.getElementById('network'),
-      notes: ${JSON.stringify(data.notes)},
-    })
+    (async () => {
+      const network = await createNotesNetwork({
+        container: document.getElementById('network'),
+        notes: ${JSON.stringify(data.notes)},
+      })
+    })()
 
   </script>
   `
