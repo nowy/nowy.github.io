@@ -24,3 +24,25 @@ pre {
   background-color: #f6f6f6;
   overflow: scroll;
 }
+
+blockquote {
+  font-style: italic;
+  color: grey;
+  margin: 50px 0;
+  position: relative;
+}
+
+blockquote::before {
+  content: '';
+  position: absolute;
+  border-left: 4px solid #c2c2c2;
+  height: 100%;
+  left: -20px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.time {
+  margin-bottom: 60px;
+  display: block;
+}

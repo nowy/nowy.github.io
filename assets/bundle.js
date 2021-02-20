@@ -50841,7 +50841,7 @@ const createApp = async ({
     appMain.classList.remove('app__main--open');
     appMain.innerHTML = homeHTML;
   });
-  router.on('/notes', () => {
+  router.on('/archive', () => {
     appMain.classList.toggle('app__main--open', true);
     appMain.innerHTML = homeHTML;
   });
@@ -50865,7 +50865,7 @@ const createApp = async ({
   document.getElementById('notes-trigger')?.addEventListener('click', () => {
     if (router.getCurrentLocation().route.path === '') {
       const selectedNotes = network.getSelectedNodes();
-      router.navigate(selectedNotes[0] ? `/notes/${selectedNotes[0]}` : '/notes');
+      router.navigate(selectedNotes[0] ? `/notes/${selectedNotes[0]}` : '/archive');
       return;
     }
 
