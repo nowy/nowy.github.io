@@ -50754,6 +50754,8 @@ Network.prototype.getOptionsFromConfigurator = function () {
 
 const createNetwork = async options => new Network(options.container, options, {
   autoResize: false,
+  // width: `${window.innerWidth - (document.getElementById('app-main') as HTMLElement).getBoundingClientRect().width}px`,
+  // height: `${window.innerHeight}px`,
   interaction: {
     hover: true,
     hideEdgesOnDrag: true,
@@ -50827,11 +50829,12 @@ const createApp = async ({
   notes
 }) => {
   const appMain = document.getElementById('app-main');
+  const container = document.getElementById('network');
   const homeHTML = appMain.innerHTML;
   const router = new Navigo('/');
   const network = await createNotesNetwork({
     notes,
-    container: document.getElementById('network')
+    container
   });
   const noteIdToNote = mapBy(notes.nodes, 'id');
   router.on('/', () => {
@@ -50856,7 +50859,6 @@ const createApp = async ({
 
     const pageTitle = document.getElementById('page-title');
     const pageContent = document.getElementById('page-content');
-    if (!pageTitle || !pageContent) throw new Error('Elements not found');
     pageTitle.innerHTML = note.label;
     pageContent.innerHTML = note.bodyHtml;
   });
@@ -50869,6 +50871,18 @@ const createApp = async ({
 
     router.navigate('');
   });
+  const networkCanvas = container.getElementsByTagName('canvas')[0];
+  document.querySelector('.app__brain').addEventListener('transitionstart', () => {
+    const hasNotes = appMain.classList.contains('app__main--notes');
+    container.style.display = hasNotes ? 'block' : 'none';
+  });
+  document.querySelector('.app__brain').addEventListener('transitionend', () => {
+    const hasNotes = appMain.classList.contains('app__main--notes');
+    container.style.transform = `scale(${hasNotes ? 1 : 0.95})`;
+    container.style.opacity = hasNotes ? '1' : '0';
+  });
+  network.on('hoverNode', () => networkCanvas.style.cursor = 'pointer');
+  network.on('blurNode', () => networkCanvas.style.cursor = 'default');
   network.on('selectNode', ({
     nodes
   }) => router.navigate(`/notes/${nodes[0]}`));

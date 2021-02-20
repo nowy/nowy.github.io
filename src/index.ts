@@ -3,13 +3,11 @@ import { createNotesNetwork, NotesNetwork } from './notes-network';
 
 export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
   const appMain = document.getElementById('app-main') as HTMLElement
+  const container = document.getElementById('network') as HTMLElement
   const homeHTML = appMain.innerHTML
 
   const router = new Navigo('/')
-  const network = await createNotesNetwork({
-    notes,
-    container: document.getElementById('network') as HTMLElement
-  })
+  const network = await createNotesNetwork({ notes, container })
   const noteIdToNote = mapBy(notes.nodes, 'id')
 
   router.on('/', () => {
@@ -34,11 +32,9 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
       network.selectNodes([data.id])
     }
 
-    const pageTitle = document.getElementById('page-title')
-    const pageContent = document.getElementById('page-content')
+    const pageTitle = document.getElementById('page-title') as HTMLElement
+    const pageContent = document.getElementById('page-content') as HTMLElement
 
-    if (!pageTitle || !pageContent) throw new Error('Elements not found')
-  
     pageTitle.innerHTML = note.label
     pageContent.innerHTML = note.bodyHtml
   })
@@ -53,6 +49,21 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
     router.navigate('')
   })
 
+  const networkCanvas = container.getElementsByTagName('canvas')[0];
+
+  (document.querySelector('.app__brain') as any).addEventListener('transitionstart', () => {
+    const hasNotes = appMain.classList.contains('app__main--notes')
+    container.style.display = hasNotes ? 'block' : 'none'
+  });
+
+  (document.querySelector('.app__brain') as any).addEventListener('transitionend', () => {
+    const hasNotes = appMain.classList.contains('app__main--notes')
+    container.style.transform = `scale(${hasNotes ? 1 : 0.95})`
+    container.style.opacity = hasNotes ? '1' : '0'
+  });
+
+  network.on('hoverNode', () => networkCanvas.style.cursor = 'pointer')
+  network.on('blurNode', () => networkCanvas.style.cursor = 'default')
   network.on('selectNode', ({ nodes }) => router.navigate(`/notes/${nodes[0]}`))
 }
 

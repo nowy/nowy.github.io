@@ -7,6 +7,8 @@ export const createNetwork = async (options: {
   override?: Partial<Options>,
 }) => new Network(options.container, options, {
   autoResize: false,
+  // width: `${window.innerWidth - (document.getElementById('app-main') as HTMLElement).getBoundingClientRect().width}px`,
+  // height: `${window.innerHeight}px`,
   interaction: {
     hover: true,
     hideEdgesOnDrag: true,
