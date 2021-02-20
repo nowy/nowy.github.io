@@ -5,9 +5,9 @@ export var data = {
 export function render (data) {
   return `
     <section class="content">
-      <a href="/" class="content__back" data-navigo>Return to main page</a>
+      <a href="/" class="content__back" data-navigo>Go to noelvaranda.dev</a>
       <h1>${data.title}</h1>
-      <time>${this.pageDate(data)}</time>
+      <time class="time">${this.pageDate(data)}</time>
       ${data.content}
     </section>
   `

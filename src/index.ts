@@ -15,7 +15,7 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
     appMain.innerHTML = homeHTML
   })
 
-  router.on('/notes', () => {
+  router.on('/archive', () => {
     appMain.classList.toggle('app__main--open', true)
     appMain.innerHTML = homeHTML
   })
@@ -42,7 +42,7 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
   document.getElementById('notes-trigger')?.addEventListener('click', () => {
     if (router.getCurrentLocation().route.path === '') {
       const selectedNotes = network.getSelectedNodes()
-      router.navigate(selectedNotes[0] ? `/notes/${selectedNotes[0]}` : '/notes')
+      router.navigate(selectedNotes[0] ? `/notes/${selectedNotes[0]}` : '/archive')
       return
     }
 

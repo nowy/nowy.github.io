@@ -6,6 +6,12 @@
   --app-width: 650px;
 }
 
+@media screen and (min-width: 70em) {
+  :root {
+    --app-width: 700px;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -138,12 +144,18 @@ p:last-child {
 
 @media screen and (min-width: 40em) {
   .app__main {
-    padding: 0 50px 50px;
+    padding: 0 40px 50px;
   }
 }
 
 .content {
-  padding: 20px;
+  padding: 20px 20px 40px;
+}
+
+@media screen and (min-width: 40em) {
+  .content {
+    padding: 20px 20px 100px;
+  }
 }
 
 .content__back {
@@ -195,6 +207,8 @@ p:last-child {
 
 h1 {
   color: var(--text-primary);
+  line-height: 4rem;
+  margin: 20px 0 10px;
 }
 
 img {

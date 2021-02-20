@@ -7,8 +7,16 @@
 .posts__entry {
   position: relative;
   display: flex;
-  padding: 0 0 5px;
-  line-height: 2.1rem;
+  padding: 0 0 25px;
+  line-height: 2.4rem;
+  flex-direction: column;
+}
+
+@media screen and (min-width: 40em) {
+  .posts__entry {
+    padding: 0 0 5px;
+    flex-direction: row;
+  }
 }
 
 .posts__entry-date {
