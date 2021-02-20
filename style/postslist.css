@@ -8,6 +8,7 @@
   position: relative;
   display: flex;
   padding: 0 0 5px;
+  line-height: 2.1rem;
 }
 
 .posts__entry-date {
