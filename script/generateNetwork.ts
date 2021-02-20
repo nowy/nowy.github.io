@@ -3,7 +3,7 @@ import fs from 'fs';
 import { Converter, Metadata, ShowdownExtension } from 'showdown';
 
 const input = {
-  dir: path.join(__dirname, '..', 'notes'),
+  dir: path.join(__dirname, '..', 'content', 'notes'),
 }
 
 const output = {

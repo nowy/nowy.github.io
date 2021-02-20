@@ -156,11 +156,11 @@ p:last-child {
   visibility: hidden;
 }
 
-.app__main--notes + .app__left-panel {
+.app__main--open + .app__left-panel {
   flex: 0 0 auto;
 }
 
-.app__main--notes ~ .app__right-panel {
+.app__main--open ~ .app__right-panel {
   background-color: #f7f7f7;
   box-shadow: inset 30px -2px 74px -30px rgb(0 0 0 / 10%);
 }
@@ -170,7 +170,7 @@ p:last-child {
   transform: translateX(-50%) rotate(180deg);
 }
 
-.app__main--notes ~ .app__right-panel .app__right-panel-trigger {
+.app__main--open ~ .app__right-panel .app__right-panel-trigger {
   display: none;
 }
 
@@ -179,15 +179,15 @@ p:last-child {
   display: block;
 }
 
-.app__main--notes #page-back {
+.app__main--open #page-back {
   visibility: visible;
 }
 
-.app__main--notes ~ .app__right-panel .app__right-panel-description {
+.app__main--open ~ .app__right-panel .app__right-panel-description {
   display: none;
 }
 
-.app__main--notes .app__right-panel-network,
+.app__main--open .app__right-panel-network,
 .app__right-panel-trigger:focus ~ .app__right-panel-network,
 .app__right-panel-trigger:hover ~ .app__right-panel-network  {
   display: block;

@@ -17,6 +17,9 @@ export default {
       last: 'End',
       lastLabel: 'Last page'
     },
+    notes: {
+      url: '/notes/'
+    },
     postsArchive: {
       url: '/post/'
     },
