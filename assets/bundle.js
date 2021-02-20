@@ -50838,17 +50838,17 @@ const createApp = async ({
   });
   const noteIdToNote = mapBy(notes.nodes, 'id');
   router.on('/', () => {
-    appMain.classList.remove('app__main--notes');
+    appMain.classList.remove('app__main--open');
     appMain.innerHTML = homeHTML;
   });
   router.on('/notes', () => {
-    appMain.classList.toggle('app__main--notes', true);
+    appMain.classList.toggle('app__main--open', true);
     appMain.innerHTML = homeHTML;
   });
   router.on('/notes/:id', ({
     data
   }) => {
-    appMain.classList.toggle('app__main--notes', true);
+    appMain.classList.toggle('app__main--open', true);
     if (!data) throw new Error('Note not found.');
     const note = noteIdToNote[data.id];
     if (!note) throw new Error(`Note not found. ID: "${data.id}"`);
@@ -50872,20 +50872,24 @@ const createApp = async ({
     router.navigate('');
   });
   const networkCanvas = container.getElementsByTagName('canvas')[0];
-  document.querySelector('.app__brain').addEventListener('transitionstart', () => {
-    const hasNotes = appMain.classList.contains('app__main--notes');
-    container.style.display = hasNotes ? 'block' : 'none';
-  });
-  document.querySelector('.app__brain').addEventListener('transitionend', () => {
-    const hasNotes = appMain.classList.contains('app__main--notes');
+
+  const setupCanvasDisplay = () => {
+    const hasNotes = appMain.classList.contains('app__main--open');
     container.style.transform = `scale(${hasNotes ? 1 : 0.95})`;
     container.style.opacity = hasNotes ? '1' : '0';
+  };
+
+  document.querySelector('.app__right-panel').addEventListener('transitionstart', () => {
+    const hasNotes = appMain.classList.contains('app__main--open');
+    container.style.display = hasNotes ? 'block' : 'none';
   });
+  document.querySelector('.app__right-panel').addEventListener('transitionend', setupCanvasDisplay);
   network.on('hoverNode', () => networkCanvas.style.cursor = 'pointer');
   network.on('blurNode', () => networkCanvas.style.cursor = 'default');
   network.on('selectNode', ({
     nodes
   }) => router.navigate(`/notes/${nodes[0]}`));
+  setupCanvasDisplay();
 };
 
 function mapBy(array, key) {
