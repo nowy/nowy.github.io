@@ -1,10 +1,9 @@
 import * as path from "path";
 import fs from 'fs';
 import { Converter, Metadata, ShowdownExtension } from 'showdown';
-import { SSL_OP_NO_TICKET } from "constants";
 
 const input = {
-  dir: path.join(__dirname, '..', '_notes'),
+  dir: path.join(__dirname, '..', 'notes'),
 }
 
 const output = {
