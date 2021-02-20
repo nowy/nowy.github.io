@@ -1,0 +1,20 @@
+.button {
+  padding: 15px 25px;
+  font-size: 22px;
+  outline: none;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  color: var(--blue);
+  margin: 208px auto auto;
+  border: none;
+  cursor: pointer;
+}
+
+.button:focus {
+  outline: 3px solid transparent;
+  background-color: var(--link-focus-bg);
+  text-decoration: none;
+}

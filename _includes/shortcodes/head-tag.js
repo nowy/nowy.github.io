@@ -10,6 +10,5 @@ export default eleventyConfig =>
       <style>
         ${this.minifyCSS(this.inlineCSS(data))}
       </style>
-      ${this.externalCSS(data)}
     </head>`
   })

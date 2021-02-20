@@ -1,7 +1,7 @@
 export var data ={
   locale: 'en',
   title: 'No page found',
-  layout: 'layouts/base',
+  layout: 'layouts/page',
   permalink: '404.html',
   templateEngineOverride: '11ty.js,md',
   eleventyExcludeFromCollections: true
@@ -17,6 +17,6 @@ export function render() {
       </p>
     </section>
   </div>
-  <div class="app__gutter"></div>
-  <div class="app__brain"></div>`
+  <div class="app__left-panel"></div>
+  <div class="app__right-panel"></div>`
 }

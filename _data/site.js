@@ -18,7 +18,7 @@ export default {
       lastLabel: 'Last page'
     },
     postsArchive: {
-      url: '/blog/'
+      url: '/post/'
     },
     dateOptions: {
       year: 'numeric',

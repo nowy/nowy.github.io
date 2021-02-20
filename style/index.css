@@ -49,28 +49,34 @@ p:last-child {
   display: flex;
   min-height: 100vh;
   max-width: 1980px;
-  overflow: hidden;
   margin: 0 auto;
 }
 
-.app__brain,
-.app__gutter {
+.app__right-panel,
+.app__left-panel {
+  display: none;
   flex: 1 1 auto;
   transition: flex 180ms ease-out;
 }
 
-.app__gutter {
+@media screen and (min-width: 70em) {
+  .app__right-panel,
+  .app__left-panel {
+    display: flex;
+  }
+}
+
+.app__left-panel {
   order: 1;
 }
 
-.app__brain {
+.app__right-panel {
   order: 3;
   position: relative;
-  display: flex;
   transition: background-color 180ms ease-out, box-shadow 180ms ease-out;
 }
 
-.app__brain-trigger {
+.app__right-panel-trigger {
   position: absolute;
   left: 0;
   transform: translateX(-50%);
@@ -78,7 +84,7 @@ p:last-child {
   transition: transform 180ms ease-out;
 }
 
-.app__brain-network {
+.app__right-panel-network {
   width: calc(1980px - var(--app-width));
   height: 100vh;
   border: none;
@@ -93,11 +99,11 @@ p:last-child {
   transition: transform 100ms ease-out, opacity 180ms ease-out;
 }
 
-.app__brain-network .vis-network:focus{
+.app__right-panel-network .vis-network:focus{
   outline: none;
 }
 
-.app__brain-description {
+.app__right-panel-description {
   display: none;
   position: absolute;
   left: 50%;
@@ -119,10 +125,8 @@ p:last-child {
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  padding: 0 70px 50px 50px;
+  padding: 0 30px 30px;
   min-width: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
   box-sizing: border-box;
   margin: 0 auto;
   flex: 0 1 var(--app-width);
@@ -130,6 +134,12 @@ p:last-child {
   order: 2;
   background-color: white;
   z-index: 2;
+}
+
+@media screen and (min-width: 40em) {
+  .app__main {
+    padding: 0 50px 50px;
+  }
 }
 
 .content {
@@ -146,26 +156,26 @@ p:last-child {
   visibility: hidden;
 }
 
-.app__main--notes + .app__gutter {
+.app__main--notes + .app__left-panel {
   flex: 0 0 auto;
 }
 
-.app__main--notes ~ .app__brain {
+.app__main--notes ~ .app__right-panel {
   background-color: #f7f7f7;
   box-shadow: inset 30px -2px 74px -30px rgb(0 0 0 / 10%);
 }
 
-.app__brain-trigger:hover,
-.app__brain-trigger:focus {
+.app__right-panel-trigger:hover,
+.app__right-panel-trigger:focus {
   transform: translateX(-50%) rotate(180deg);
 }
 
-.app__main--notes ~ .app__brain .app__brain-trigger {
+.app__main--notes ~ .app__right-panel .app__right-panel-trigger {
   display: none;
 }
 
-.app__brain-trigger:hover ~ .app__brain-description,
-.app__brain-trigger:focus ~ .app__brain-description {
+.app__right-panel-trigger:hover ~ .app__right-panel-description,
+.app__right-panel-trigger:focus ~ .app__right-panel-description {
   display: block;
 }
 
@@ -173,60 +183,22 @@ p:last-child {
   visibility: visible;
 }
 
-.app__main--notes ~ .app__brain .app__brain-description {
+.app__main--notes ~ .app__right-panel .app__right-panel-description {
   display: none;
 }
 
-.app__main--notes .app__brain-network,
-.app__brain-trigger:focus ~ .app__brain-network,
-.app__brain-trigger:hover ~ .app__brain-network  {
+.app__main--notes .app__right-panel-network,
+.app__right-panel-trigger:focus ~ .app__right-panel-network,
+.app__right-panel-trigger:hover ~ .app__right-panel-network  {
   display: block;
-}
-
-table {
-  margin: 1em 0;
-}
-
-table td,
-table th {
-  padding-right: 1em;
 }
 
 h1 {
   color: var(--text-primary);
-  /* font-size: var(--font-size-xl);
-  font-weight: 500;
-  line-height: var(--font-size-xl); */
-  /* margin: 0 0 30px; */
 }
 
 img {
   max-width: 100%;
-}
-
-.button {
-  padding: 15px 25px;
-  font-size: 22px;
-  outline: none;
-  text-decoration: none;
-  display: inline-block;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  color: var(--blue);
-  margin: 208px auto auto;
-  border: none;
-  cursor: pointer;
-}
-
-.button:focus {
-  outline: 3px solid transparent;
-  background-color: var(--link-focus-bg);
-  text-decoration: none;
-}
-
-a[href]:hover {
-  color: var(--link-hover);
 }
 
 @keyframes slidein {

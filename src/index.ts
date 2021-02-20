@@ -51,12 +51,12 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
 
   const networkCanvas = container.getElementsByTagName('canvas')[0];
 
-  (document.querySelector('.app__brain') as any).addEventListener('transitionstart', () => {
+  (document.querySelector('.app__right-panel') as any).addEventListener('transitionstart', () => {
     const hasNotes = appMain.classList.contains('app__main--notes')
     container.style.display = hasNotes ? 'block' : 'none'
   });
 
-  (document.querySelector('.app__brain') as any).addEventListener('transitionend', () => {
+  (document.querySelector('.app__right-panel') as any).addEventListener('transitionend', () => {
     const hasNotes = appMain.classList.contains('app__main--notes')
     container.style.transform = `scale(${hasNotes ? 1 : 0.95})`
     container.style.opacity = hasNotes ? '1' : '0'
