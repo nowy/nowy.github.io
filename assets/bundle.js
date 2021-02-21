@@ -50843,7 +50843,7 @@ const createApp = async ({
   });
   router.on('/archive', () => {
     appMain.classList.toggle('app__main--open', true);
-    appMain.innerHTML = homeHTML;
+    appMain.innerHTML = renderArchive();
   });
   router.on('/notes/:id', ({
     data
@@ -50862,7 +50862,13 @@ const createApp = async ({
     pageTitle.innerHTML = note.label;
     pageContent.innerHTML = note.bodyHtml;
   });
-  document.getElementById('notes-trigger')?.addEventListener('click', () => {
+  const trigger = document.getElementById('notes-trigger');
+  trigger.addEventListener('click', () => {
+    if (trigger.dataset['open'] === 'true') {
+      window.location.assign('/');
+      return;
+    }
+
     if (router.getCurrentLocation().route.path === '') {
       const selectedNotes = network.getSelectedNodes();
       router.navigate(selectedNotes[0] ? `/notes/${selectedNotes[0]}` : '/archive');
@@ -50895,5 +50901,18 @@ const createApp = async ({
 function mapBy(array, key) {
   return Object.fromEntries(array.map(entry => [entry[key], entry]));
 }
+
+const renderArchive = () => `
+  <section class="content">
+    <a href="/" class="content__back" id="page-back" data-navigo>Return back home</a>
+    <h1 id="page-title">Archive</h1>
+    <div id="page-content">
+      <p class="hero-text">
+        I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to eachother.
+      </p>
+      <p class="hero-text">This is still very bare, I plan on adding to it as I read (and note down) more.</p>
+    </div>
+  </section>
+`;
 
 export { createApp };
