@@ -1,9 +1,11 @@
 import { readFileSync } from 'fs'
 import includes from './_includes/'
+import syntaxHighlight from '@11ty/eleventy-plugin-syntaxhighlight'
 
 export default function (eleventyConfig) {
   includes(eleventyConfig)
 
+  eleventyConfig.addPlugin(syntaxHighlight)
   eleventyConfig.setDataDeepMerge(true)
   eleventyConfig.addPassthroughCopy('style')
   eleventyConfig.addPassthroughCopy('img')

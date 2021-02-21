@@ -8,7 +8,7 @@ templateEngineOverride: '11ty.js,md'
 
 ---
 
-One of the benefits of working at Attest is its 10% time; as an employee you can optionally take 10% of your time to go off and better either yourself or the company. This is quite common amongst tech companies, and in fact Gmail and Maps were both invented in Google's 20% time. It's that short period of time where you're not bound to team responsibilities, or deadlines, and can focus solely on what you (or a team of you) think will improve the platform or yourselves. This short post goes into where I spent my 10% time; what I am proud of, what I regret, and what I would have done differently.
+One of the benefits of working at [Attest](https://askattest.com) is its 10% time; as an employee you can optionally take 10% of your time to go off and better either yourself or the company. This is quite common amongst tech companies, and in fact Gmail and Maps were both invented in Google's 20% time. It's that short period of time where you're not bound to team responsibilities, or deadlines, and can focus solely on what you (or a team of you) think will improve the platform or yourselves. This short post goes into where I spent my 10% time; what I am proud of, what I regret, and what I would have done differently.
 
 I used to have regular meetings with the COO of Attest - a lot of people did. In these meetings there was an indirect, and underlying set of questions on his side:
 > Where is the front end chapter now?

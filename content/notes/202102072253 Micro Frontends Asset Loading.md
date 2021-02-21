@@ -29,9 +29,11 @@ In order to guarantee the user's resources are cache busted, and synchronization
 
 When the HTML content is fetched, a `version` is returned in the header, when we look at our cached `manifest.json`, we compare its version to the one returned in the HTML response. If they don't match then we request a new `manifest.json` and update it. 
 
-> #fe-library [Podium](https://podium-lib.io/) provides out-of-the-box functionality for creating versioned manifests.
+> [Podium](https://podium-lib.io/) provides out-of-the-box functionality for creating versioned manifests. #fe-library
 
 
 ## Links
+
+- [[202102121403 Asset Bundle Granularity]]
 
 ## References

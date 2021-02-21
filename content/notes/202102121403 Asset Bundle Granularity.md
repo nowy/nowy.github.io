@@ -8,10 +8,9 @@ Bundle granularity referrers to how big or small static assets served to a user 
 Picking the right granularity is essential as it allows teams to understand how they will code-
 
 #### On-demand loading
-
+TBC
 
 ## Links
-- [[202102121403 Asset Bundle Granularity]]
 
 ## References
 - [[Micro Frontends in Action]] (pages 186-189)

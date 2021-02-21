@@ -12,7 +12,7 @@ Micro frontends are supposed to be well contained, so too much communication to 
 
 Asynchronous loading of fragments means not all fragments might have loaded when an event is sent. Standard events could therefore not suffice to update different micro frontends if one has not loaded in time. For example if micro frontend #1 updates, and micro frontend #2 needs to react to this change but has not yet loaded this could cause inconsistency.
 
-#potential-fleet Lastly, as tempting as it may be to use stores and API calls that persist across micro frontends, it is important to keep these separate as sharing state and stores causes for tight coupling. For example if micro frontend #1 wanted to change the structure of their store but micro frontend #2 was also using this, then there would need to be unnecessary communication and accord to do so. A small duplication is sometimes better than the wrong abstraction.
+Lastly, as tempting as it may be to use stores and API calls that persist across micro frontends, it is important to keep these separate as sharing state and stores causes for tight coupling. For example if micro frontend #1 wanted to change the structure of their store but micro frontend #2 was also using this, then there would need to be unnecessary communication and accord to do so. A small duplication is sometimes better than the wrong abstraction. #potential-fleet
 
 ### Parent to child / child to parent
 Parent to fragment communication can be done using the "props down, events up" technique, where a parent communicates to fragments via their attributes, and the vice-versa is done using native events.

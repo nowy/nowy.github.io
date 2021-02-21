@@ -12,7 +12,8 @@ const output = {
 }
 
 const classMap = {
-  p: 'hero-text'
+  p: 'hero-text',
+  pre: 'language-markup'
 }
 
 const replaceClassNames: ShowdownExtension[] = Object.keys(classMap)
@@ -42,7 +43,8 @@ const getId = (f: string) => {
     extensions: [replaceMdLinks, ...replaceClassNames]
   })
 
-  const files = await fs.promises.readdir(input.dir)
+  const files = (await fs.promises.readdir(input.dir))
+    .filter(fileName => fileName.split('.')[1] === 'md')
 
   const nodes = await Promise.all(files.map(async fileName => {
     const fileContent = await fs.promises.readFile(
