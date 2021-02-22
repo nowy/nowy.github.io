@@ -54,83 +54,64 @@ p:last-child {
 .app {
   display: flex;
   min-height: 100vh;
-  max-width: 1980px;
   margin: 0 auto;
+  max-width: 1980px;
+  overflow: auto;
 }
 
-.app__right-panel,
-.app__left-panel {
-  display: none;
-  flex: 1 1 auto;
-  transition: flex 180ms ease-out;
-}
-
-@media screen and (min-width: 70em) {
-  .app__right-panel,
-  .app__left-panel {
-    display: flex;
-  }
-}
-
-.app__left-panel {
-  order: 1;
-}
-
-.app__right-panel {
-  order: 3;
+.app__gutter {
   position: relative;
-  transition: background-color 180ms ease-out, box-shadow 180ms ease-out;
+  flex: 0 0 auto;
+  overflow: hidden;
 }
 
-.app__right-panel-trigger {
-  font-size: 4rem;
-  position: absolute;
-  right: 80px;
-  z-index: 2;
-  transition: transform 180ms ease-out;
-  margin: 190px auto auto;
+.app__interactive,
+.app__gutter {
   display: flex;
-  line-height: 70px;
+  transition: flex 280ms ease-out;
+}
+
+.app__interactive {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: calc(1980px - var(--app-width) - 64px);
+  transform: translateX(calc(-1 * (1980px - var(--app-width) - 64px)));
+  transition: transform 280ms ease-out, background-color 280ms ease-out, box-shadow 280ms ease-out;
+}
+
+.app__trigger {
+  display: flex;
   align-items: center;
   justify-content: center;
-  height: 70px;
+  height: 100vh;
   box-sizing: border-box;
+  background-color: #fff;
+  width: 64px;
+  box-shadow: 2px 0px 2px rgba(0, 0, 0, 0.04);
+  outline: none;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
 }
 
-.app__right-panel-network {
-  width: calc(1980px - var(--app-width));
+.app__interactive-network {
+  width: 100%;
   height: 100vh;
   border: none;
   margin: 0;
   padding: 0;
   z-index: 1;
-  /* opacity: 0; */
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
-  transition: transform 100ms ease-out, opacity 180ms ease-out;
+  transition: transform 280ms ease-out, opacity 280ms ease-out;
 }
 
-.app__right-panel-network .vis-network:focus{
+.app__interactive-network .vis-network:focus{
   outline: none;
-}
-
-.app__right-panel-description {
-  display: none;
-  position: absolute;
-  right: 0;
-  transform: translateX(-50%);
-  background-color: white;
-  padding: 40px;
-  border-radius: 4px;
-  margin-top: 180px;
-  box-shadow: 30px -2px 74px -30px rgb(0 0 0 / 10%);
-  width: 300px;
-  animation-duration: .2s;
-  animation-name: slidein;
-  animation-fill-mode: forwards;
-  z-index: 2;
 }
 
 .app__main {
@@ -141,12 +122,21 @@ p:last-child {
   padding: 0 30px 30px;
   min-width: 300px;
   box-sizing: border-box;
-  margin: 0 auto;
   flex: 0 1 var(--app-width);
-  transition: flex 180ms ease-out;
-  order: 2;
-  background-color: white;
-  z-index: 2;
+  transition: flex 280ms ease-out;
+  background-color: #fff;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 70em) {
+  .app__trigger,
+  .app__gutter {
+    display: none;
+  }
+
+  .app_main {
+    margin: 0 auto;
+  }
 }
 
 @media screen and (min-width: 40em) {
@@ -156,18 +146,13 @@ p:last-child {
 }
 
 .content {
-  padding: 20px 20px 40px;
-}
-
-@media screen and (min-width: 40em) {
-  .content {
-    padding: 20px 20px 100px;
-  }
+  margin: auto;
+  padding: 40px 20px;
 }
 
 .content__back {
   display: inline-block;
-  margin: 20px 0 60px;
+  margin: 0 0 60px;
   height: 20px;
 }
 
@@ -175,36 +160,21 @@ p:last-child {
   visibility: hidden;
 }
 
-.app__main--open + .app__left-panel {
-  flex: 0 0 auto;
+.app--open .app__gutter {
+  flex: 1 1 auto;
 }
 
-.app__main--open ~ .app__right-panel {
+.app--open .app__interactive {
+  transform: translateX(0);
   background-color: #f7f7f7;
   box-shadow: inset 30px -2px 74px -30px rgb(0 0 0 / 10%);
 }
 
-.app__right-panel-trigger:hover,
-.app__right-panel-trigger:focus {
-  transform: rotate(180deg);
-}
-
-.app__right-panel-trigger:hover ~ .app__right-panel-description,
-.app__right-panel-trigger:focus ~ .app__right-panel-description {
-  display: block;
-}
-
-.app__main--open #page-back {
+.app--open #page-back {
   visibility: visible;
 }
 
-.app__main--open ~ .app__right-panel .app__right-panel-description {
-  display: none;
-}
-
-.app__main--open .app__right-panel-network,
-.app__right-panel-trigger:focus ~ .app__right-panel-network,
-.app__right-panel-trigger:hover ~ .app__right-panel-network  {
+.app--open .app__interactive-network {
   display: block;
 }
 

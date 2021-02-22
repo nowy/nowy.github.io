@@ -50828,6 +50828,7 @@ const createNotesNetwork = async options => {
 const createApp = async ({
   notes
 }) => {
+  const app = document.querySelector('.app');
   const appMain = document.getElementById('app-main');
   const container = document.getElementById('network');
   const homeHTML = appMain.innerHTML;
@@ -50838,17 +50839,17 @@ const createApp = async ({
   });
   const noteIdToNote = mapBy(notes.nodes, 'id');
   router.on('/', () => {
-    appMain.classList.remove('app__main--open');
+    app.classList.remove('app--open');
     appMain.innerHTML = homeHTML;
   });
   router.on('/archive', () => {
-    appMain.classList.toggle('app__main--open', true);
+    app.classList.toggle('app--open', true);
     appMain.innerHTML = renderArchive();
   });
   router.on('/notes/:id', ({
     data
   }) => {
-    appMain.classList.toggle('app__main--open', true);
+    app.classList.toggle('app--open', true);
     if (!data) throw new Error('Note not found.');
     const note = noteIdToNote[data.id];
     if (!note) throw new Error(`Note not found. ID: "${data.id}"`);
@@ -50876,13 +50877,13 @@ const createApp = async ({
   const networkCanvas = container.getElementsByTagName('canvas')[0];
 
   const setupCanvasDisplay = () => {
-    const hasNotes = appMain.classList.contains('app__main--open');
+    const hasNotes = app.classList.contains('app--open');
     container.style.transform = `scale(${hasNotes ? 1 : 0.95})`;
     container.style.opacity = hasNotes ? '1' : '0';
   };
 
-  document.querySelector('.app__right-panel').addEventListener('transitionstart', () => {
-    const hasNotes = appMain.classList.contains('app__main--open');
+  document.querySelector('.app__interactive').addEventListener('transitionstart', () => {
+    const hasNotes = app.classList.contains('app--open');
     container.style.visibility = hasNotes ? 'visible' : 'hidden';
 
     if (hasNotes) {
@@ -50895,7 +50896,7 @@ const createApp = async ({
       });
     }
   });
-  document.querySelector('.app__right-panel').addEventListener('transitionend', setupCanvasDisplay);
+  document.querySelector('.app__interactive').addEventListener('transitionend', setupCanvasDisplay);
   network.on('hoverNode', () => networkCanvas.style.cursor = 'pointer');
   network.on('blurNode', () => networkCanvas.style.cursor = 'default');
   network.on('selectNode', ({
@@ -50910,7 +50911,6 @@ function mapBy(array, key) {
 
 const renderArchive = () => `
 <section class="content">
-  <a href="/" class="content__back" id="page-back" data-navigo>Return back home</a>
   <h1 id="page-title">Notes Archive</h1>
   <div id="page-content">
     <p class="paragraph">
