@@ -1,8 +1,12 @@
-.app--interactive {
-  overflow: hidden;
-}
-
-.app--interactive .app__main {
-  overflow-y: auto;
-  overflow-x: hidden;
+@media screen and (min-width: 70em) {
+  .app--interactive {
+    overflow: hidden;
+    max-width: 1980px;
+  }
+  
+  .app--interactive .app__main {
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0;
+  }
 }

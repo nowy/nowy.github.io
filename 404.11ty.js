@@ -8,15 +8,10 @@ export var data ={
 }
 
 export function render() {
-  return `<div class="app__main">
-    <section class="content">
-      <a href="/" class="content__back" data-navigo>Return to main page</a>
-      <h1 class="intro">Not found</h1>
-      <p class="paragraph">
-        If you're looking for one of my /notes - SSR is still underway. Please hold.
-      </p>
-    </section>
-  </div>
-  <div class="app__left-panel"></div>
-  <div class="app__right-panel"></div>`
+  return `<section class="content">
+    <h1 class="intro">Not found</h1>
+    <p class="paragraph">
+      I couldn't find the page you were looking for. <a href="/" data-navigo>Return to main page</a> so I can be more useful.
+    </p>
+  </section>`
 }

@@ -9,7 +9,6 @@ export const data = {
 
 export const render = () => `
 <section class="content">
-  <a href="/" class="content__back" id="page-back">Return back home</a>
   <h1 id="page-title">Notes Archive</h1>
   <div id="page-content">
     <p class="paragraph">

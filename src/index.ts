@@ -2,6 +2,7 @@ import Navigo from 'navigo';
 import { createNotesNetwork, NotesNetwork } from './notes-network';
 
 export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
+  const app = document.querySelector('.app') as HTMLElement
   const appMain = document.getElementById('app-main') as HTMLElement
   const container = document.getElementById('network') as HTMLElement
   const homeHTML = appMain.innerHTML
@@ -11,17 +12,17 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
   const noteIdToNote = mapBy(notes.nodes, 'id')
 
   router.on('/', () => {
-    appMain.classList.remove('app__main--open')
+    app.classList.remove('app--open')
     appMain.innerHTML = homeHTML
   })
 
   router.on('/archive', () => {
-    appMain.classList.toggle('app__main--open', true)
+    app.classList.toggle('app--open', true)
     appMain.innerHTML = renderArchive()
   })
 
   router.on('/notes/:id', ({ data }) => {
-    appMain.classList.toggle('app__main--open', true)
+    app.classList.toggle('app--open', true)
     if (!data) throw new Error('Note not found.')
 
     const note = noteIdToNote[data.id]
@@ -56,13 +57,13 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
 
   const networkCanvas = container.getElementsByTagName('canvas')[0];
   const setupCanvasDisplay = () => {
-    const hasNotes = appMain.classList.contains('app__main--open')
+    const hasNotes = app.classList.contains('app--open')
     container.style.transform = `scale(${hasNotes ? 1 : 0.95})`
     container.style.opacity = hasNotes ? '1' : '0'
   }
 
-  (document.querySelector('.app__right-panel') as any).addEventListener('transitionstart', () => {
-    const hasNotes = appMain.classList.contains('app__main--open')
+  (document.querySelector('.app__interactive') as any).addEventListener('transitionstart', () => {
+    const hasNotes = app.classList.contains('app--open')
     container.style.visibility = hasNotes ? 'visible' : 'hidden'
 
     if (hasNotes) {
@@ -70,7 +71,7 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
     }
   });
 
-  (document.querySelector('.app__right-panel') as any).addEventListener('transitionend', setupCanvasDisplay);
+  (document.querySelector('.app__interactive') as any).addEventListener('transitionend', setupCanvasDisplay);
 
   network.on('hoverNode', () => networkCanvas.style.cursor = 'pointer')
   network.on('blurNode', () => networkCanvas.style.cursor = 'default')
@@ -85,7 +86,6 @@ function mapBy<T, K extends keyof T>(array: T[], key: K): Record<string, T> {
 
 const renderArchive = () => `
 <section class="content">
-  <a href="/" class="content__back" id="page-back" data-navigo>Return back home</a>
   <h1 id="page-title">Notes Archive</h1>
   <div id="page-content">
     <p class="paragraph">

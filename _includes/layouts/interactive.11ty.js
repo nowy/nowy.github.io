@@ -11,18 +11,19 @@ export function render(data) {
   })()
 
   return `
-    <main class="app app--interactive">
-      <div id="test">
-      <div></div>
-      <div></div>
+    <main class="app app--interactive ${!!data.isOpen ? 'app--open' : ''}">
+      <div class="app__gutter">
+        <div class="app__interactive">
+          <div id="network" class="app__interactive-network"></div>
+        </div>
       </div>
-      <div class="app__main ${!!data.isOpen ? 'app__main--open' : ''}" id="app-main">${data.content}</div>
-      <div class="app__left-panel"></div>
-      <div class="app__right-panel">
-        <div id="network" class="app__right-panel-network"></div>
-        <button class="button app__right-panel-trigger" id="notes-trigger" data-open=${!!data.isOpen}>&#8250;</button>
-        <div class="app__right-panel-description paragraph">Checkout my notes</div>
-      </div>
+      <button class="app__trigger" id="notes-trigger" data-open=${!!data.isOpen}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 8L3 12L7 16" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M17 16L21 12L17 8" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="app__main" id="app-main">${data.content}</div>
       <script type="module">
         import { createApp } from '/assets/bundle.js';
 

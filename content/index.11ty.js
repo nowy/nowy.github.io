@@ -8,7 +8,6 @@ export const data = {
 
 export const render = data => `
   <section class="content">
-    <a href="/" class="content__back" id="page-back" data-navigo>Return back home</a>
     <h1 id="page-title">Noel Varanda</h1>
     <div id="page-content">
       <p class="paragraph">
