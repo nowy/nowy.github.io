@@ -1,4 +1,5 @@
 export const data = {
+  title: 'Noel Varanda',
   layout: 'layouts/interactive',
   tags: ['home'],
   weight: 1,

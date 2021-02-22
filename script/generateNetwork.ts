@@ -23,6 +23,12 @@ const replaceClassNames: ShowdownExtension[] = Object.keys(classMap)
     replace: `<${key} class="${classMap[key as keyof typeof classMap]}" $1>`
   }))
 
+const addLazyLoadToImage: ShowdownExtension = {
+  type: 'output',
+  regex: new RegExp(`<img (.*) />`, 'g'),
+  replace: `<img loading="lazy" $1>`
+}
+
 const replaceMdLinks: ShowdownExtension = {
   type: 'lang',
   regex: /\[\[(\d+)\s?(.*?)\]\]/g,
@@ -40,7 +46,7 @@ const getId = (f: string) => {
 
   const mdConverter = new Converter({
     metadata: true,
-    extensions: [replaceMdLinks, ...replaceClassNames]
+    extensions: [replaceMdLinks, addLazyLoadToImage, ...replaceClassNames]
   })
 
   const files = (await fs.promises.readdir(input.dir))

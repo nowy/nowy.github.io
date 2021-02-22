@@ -1,7 +1,7 @@
 {
   "name": "nowy.github.io",
   "version": "0.0.1",
-  "description": "Personal blog.",
+  "description": "Personal Web site.",
   "main": "index.js",
   "scripts": {
     "generate:network": "ts-node --project script/tsconfig.json script/generateNetwork.ts",

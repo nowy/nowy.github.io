@@ -1,4 +1,5 @@
 node_modules/
 _site/
+_data/notes.json
 dist/
 package-lock.json
