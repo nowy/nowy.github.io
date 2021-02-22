@@ -55,7 +55,6 @@ p:last-child {
   display: flex;
   min-height: 100vh;
   margin: 0 auto;
-  max-width: 1980px;
   overflow: auto;
 }
 
@@ -94,6 +93,15 @@ p:last-child {
   border: none;
   cursor: pointer;
   z-index: 2;
+}
+
+.app__trigger:hover path {
+  stroke: var(--link);
+}
+
+.app__trigger:focus svg {
+  background-color: var(--link-focus-bg);
+  box-shadow: 0 -2px var(--link-focus-bg), 0 4px var(--text-primary);
 }
 
 .app__interactive-network {
