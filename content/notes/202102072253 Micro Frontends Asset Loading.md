@@ -33,7 +33,8 @@ When the HTML content is fetched, a `version` is returned in the header, when we
 
 
 ## Links
-
+- [[202101301828 Micro Frontends]]
 - [[202102121403 Asset Bundle Granularity]]
 
 ## References
+- [[Micro Frontends in Action]]

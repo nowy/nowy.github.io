@@ -5,6 +5,7 @@ before_script:
   - npm install
 script: npm run build
 deploy:
+  fqdn: noelvaranda.dev
   local-dir: _site
   provider: pages
   skip-cleanup: true

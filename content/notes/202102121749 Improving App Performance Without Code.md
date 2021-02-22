@@ -21,5 +21,6 @@ As we write more and more expectations of performance, the boundaries around sl
 As a consequence of defining performance at a user level, it becomes easier to define and automate telemetry systems in code, or per service. We also now know what we should and shouldn't log, or should look out for in code reviews. So not only does centering performance at the idea inception stage help the *user*, we in turn make it easier to automate and assert it at a *function* level.
 
 ## Links
+- [[micrfront]]
 
 ## References

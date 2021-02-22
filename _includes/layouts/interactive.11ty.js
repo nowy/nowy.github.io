@@ -21,7 +21,7 @@ export function render(data) {
       <div class="app__right-panel">
         <div id="network" class="app__right-panel-network"></div>
         <button class="button app__right-panel-trigger" id="notes-trigger" data-open=${!!data.isOpen}>&#8250;</button>
-        <div class="app__right-panel-description hero-text">Checkout my notes</div>
+        <div class="app__right-panel-description paragraph">Checkout my notes</div>
       </div>
       <script type="module">
         import { createApp } from '/assets/bundle.js';

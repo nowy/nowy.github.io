@@ -6,17 +6,6 @@ export default {
     title: 'Noel Varanda',
     tagline: 'Engineer at heart.',
     separator: ' | ',
-    skipToContent: 'Skip to main content',
-    pagination: {
-      navLabel: 'Pagination',
-      pageLabel: 'Page',
-      first: '1',
-      firstLabel: '1',
-      previous: 'Previous',
-      next: 'Next',
-      last: 'End',
-      lastLabel: 'Last page'
-    },
     notes: {
       url: '/notes/'
     },

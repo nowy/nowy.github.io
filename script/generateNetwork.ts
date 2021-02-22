@@ -12,7 +12,7 @@ const output = {
 }
 
 const classMap = {
-  p: 'hero-text',
+  p: 'paragraph',
   pre: 'language-markup'
 }
 

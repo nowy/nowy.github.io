@@ -89,6 +89,12 @@ p:last-child {
   z-index: 2;
   transition: transform 180ms ease-out;
   margin: 190px auto auto;
+  display: flex;
+  line-height: 70px;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  box-sizing: border-box;
 }
 
 .app__right-panel-network {
@@ -98,7 +104,7 @@ p:last-child {
   margin: 0;
   padding: 0;
   z-index: 1;
-  opacity: 0;
+  /* opacity: 0; */
   position: absolute;
   right: 0;
   top: 0;
@@ -113,7 +119,7 @@ p:last-child {
 .app__right-panel-description {
   display: none;
   position: absolute;
-  left: 50%;
+  right: 0;
   transform: translateX(-50%);
   background-color: white;
   padding: 40px;
@@ -208,8 +214,16 @@ h1 {
   margin: 20px 0 10px;
 }
 
+h2 {
+  margin: 20px 0 10px;
+}
+
 img {
   max-width: 100%;
+}
+
+.paragraph--last {
+  margin-bottom: 50px;
 }
 
 blockquote {
