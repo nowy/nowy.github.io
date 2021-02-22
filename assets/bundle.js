@@ -50852,11 +50852,7 @@ const createApp = async ({
     if (!data) throw new Error('Note not found.');
     const note = noteIdToNote[data.id];
     if (!note) throw new Error(`Note not found. ID: "${data.id}"`);
-
-    if (data) {
-      network.selectNodes([data.id]);
-    }
-
+    network.selectNodes([data.id]);
     const pageTitle = document.getElementById('page-title');
     const pageContent = document.getElementById('page-content');
     pageTitle.innerHTML = note.label;
@@ -50887,7 +50883,17 @@ const createApp = async ({
 
   document.querySelector('.app__right-panel').addEventListener('transitionstart', () => {
     const hasNotes = appMain.classList.contains('app__main--open');
-    container.style.display = hasNotes ? 'block' : 'none';
+    container.style.visibility = hasNotes ? 'visible' : 'hidden';
+
+    if (hasNotes) {
+      network.moveTo({
+        scale: 1.4,
+        position: {
+          x: 0,
+          y: 0
+        }
+      });
+    }
   });
   document.querySelector('.app__right-panel').addEventListener('transitionend', setupCanvasDisplay);
   network.on('hoverNode', () => networkCanvas.style.cursor = 'pointer');
@@ -50896,6 +50902,13 @@ const createApp = async ({
     nodes
   }) => router.navigate(`/notes/${nodes[0]}`));
   setupCanvasDisplay();
+  network.moveTo({
+    scale: 1.4,
+    position: {
+      x: 0,
+      y: 0
+    }
+  });
 };
 
 function mapBy(array, key) {
@@ -50903,16 +50916,16 @@ function mapBy(array, key) {
 }
 
 const renderArchive = () => `
-  <section class="content">
-    <a href="/" class="content__back" id="page-back" data-navigo>Return back home</a>
-    <h1 id="page-title">Archive</h1>
-    <div id="page-content">
-      <p class="hero-text">
-        I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to eachother.
-      </p>
-      <p class="hero-text">This is still very bare, I plan on adding to it as I read (and note down) more.</p>
-    </div>
-  </section>
+<section class="content">
+  <a href="/" class="content__back" id="page-back" data-navigo>Return back home</a>
+  <h1 id="page-title">Notes Archive</h1>
+  <div id="page-content">
+    <p class="hero-text">
+      I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to eachother.
+    </p>
+    <p class="hero-text">This is still very bare, I plan on adding to it as I read (and note down) more.</p>
+  </div>
+</section>
 `;
 
 export { createApp };
