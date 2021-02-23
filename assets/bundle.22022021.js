@@ -50842,8 +50842,7 @@ const createApp = async ({
   const noteIdToNote = mapBy(notes.nodes, 'id');
 
   if (selectedNode) {
-    network.selectNodes([selectedNode]); // console.warn({network})
-    // network.redraw()
+    network.selectNodes([selectedNode]);
   }
 
   const toggleNetwork = ({
