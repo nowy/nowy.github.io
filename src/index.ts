@@ -52,7 +52,7 @@ export const createApp = async ({
     network.selectNodes([data.id])
 
     const pageTitle = document.getElementById('page-title') as HTMLElement
-    const pageContent = document.getElementById('page-content') as HTMLElement
+    const pageContent = document.querySelector('.page-content') as HTMLElement
 
     pageTitle.innerHTML = note.label
     pageContent.innerHTML = note.bodyHtml
@@ -105,8 +105,9 @@ function mapBy<T, K extends keyof T>(array: T[], key: K): Record<string, T> {
 
 const renderArchive = () => `
 <section class="content">
+  <a href="/" class="content__back" id="page-back" data-navigo>Return back home</a>
   <h1 id="page-title">Notes Archive</h1>
-  <div id="page-content">
+  <div class="page-content">
     <p class="paragraph">
       I recently started a new way of memorizing the things I learn, which is essentially to write them in my own words as soon as I read them.
       I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to each other.

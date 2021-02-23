@@ -8,7 +8,7 @@
 
 @media screen and (min-width: 70em) {
   :root {
-    --app-width: 700px;
+    --app-width: 715px;
   }
 }
 
@@ -159,9 +159,14 @@ p:last-child {
   }
 }
 
+.page-content {
+  padding-bottom: 80px;
+}
+
 .content {
   margin: auto;
   padding: 40px 20px;
+  width: 100%;
 }
 
 .content__back {

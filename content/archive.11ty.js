@@ -9,8 +9,9 @@ export const data = {
 
 export const render = () => `
 <section class="content">
+  <a href="/" class="content__back" id="page-back">Return back home</a>
   <h1 id="page-title">Notes Archive</h1>
-  <div id="page-content">
+  <div class="page-content">
     <p class="paragraph">
       I recently started a new way of memorizing the things I learn, which is essentially to write them in my own words as soon as I read them.
       I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank" rel="noopener">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to each other.
