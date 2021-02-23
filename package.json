@@ -1,7 +1,7 @@
 {
   "name": "nowy.github.io",
   "version": "0.0.1",
-  "description": "Personal Web site.",
+  "description": "Love anything front end, ranging user animations to asset bundling. Talk to me.",
   "main": "index.js",
   "scripts": {
     "generate:network": "ts-node --project script/tsconfig.json script/generateNetwork.ts",

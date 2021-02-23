@@ -12,7 +12,7 @@ export const render = data => `
     <div id="page-content">
       <p class="paragraph">
         I'm no designer, but I reckon I need at least three lines of text to make this paragraph "fit in". Read some of my content below
-        or get in touch using some of the links above. Nailed it.
+        or get in touch using <a href="https://www.linkedin.com/in/noelvaranda/" target="_blank" rel="noopener">LinkedIn</a>, read some code on <a href="https://github.com/nowy" target="_blank" rel="noopener">Github</a>. Nailed it.
       </p>
       ${this.archive(data, [...data.collections.posts].reverse())}
     </div>
