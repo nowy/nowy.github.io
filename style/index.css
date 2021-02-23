@@ -175,6 +175,12 @@ p:last-child {
   width: 100%;
 }
 
+@media screen and (min-width: 40em) {
+  .blog-post {
+    padding: 40px 20px 140px;
+  }
+}
+
 .content__back {
   display: inline-block;
   margin: 0 0 60px;
