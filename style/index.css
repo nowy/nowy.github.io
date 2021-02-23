@@ -8,7 +8,7 @@
 
 @media screen and (min-width: 70em) {
   :root {
-    --app-width: 700px;
+    --app-width: 715px;
   }
 }
 
@@ -53,7 +53,6 @@ p:last-child {
   display: flex;
   min-height: 100vh;
   margin: 0 auto;
-  overflow: auto;
 }
 
 .app__gutter {
@@ -153,21 +152,39 @@ p:last-child {
   }
 }
 
+@media print {
+  .app__trigger,
+  .app__gutter {
+    display: none;
+  }
+}
+
 @media screen and (min-width: 40em) {
   .app__main {
     padding: 0 40px 50px;
   }
 }
 
+.page-content {
+  padding-bottom: 80px;
+}
+
 .content {
   margin: auto;
   padding: 40px 20px;
+  width: 100%;
 }
 
 .content__back {
   display: inline-block;
   margin: 0 0 60px;
   height: 20px;
+}
+
+@media print {
+  .content__back {
+    display: none;
+  }
 }
 
 #page-back {
