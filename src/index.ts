@@ -1,28 +1,48 @@
 import Navigo from 'navigo';
 import { createNotesNetwork, NotesNetwork } from './notes-network';
+import throttle from 'lodash.throttle'
 
-export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
+export const createApp = async ({
+  selectedNode,
+  notes
+}: {
+  selectedNode?: number,
+  notes: NotesNetwork
+}) => {
   const app = document.querySelector('.app') as HTMLElement
   const appMain = document.getElementById('app-main') as HTMLElement
   const container = document.getElementById('network') as HTMLElement
+  const trigger = document.getElementById('notes-trigger') as HTMLElement
   const homeHTML = appMain.innerHTML
 
   const router = new Navigo('/')
   const network = await createNotesNetwork({ notes, container })
   const noteIdToNote = mapBy(notes.nodes, 'id')
 
+  if (selectedNode) {
+    network.selectNodes([selectedNode])
+    // console.warn({network})
+
+    // network.redraw()
+  }
+
+  const toggleNetwork = ({ isOpen }: { isOpen: boolean }) => {
+    app.classList.toggle('app--open', isOpen)
+    trigger.setAttribute('aria-expanded', `${isOpen}`)
+  }
+
   router.on('/', () => {
-    app.classList.remove('app--open')
+    toggleNetwork({ isOpen: false })
     appMain.innerHTML = homeHTML
   })
 
   router.on('/archive', () => {
-    app.classList.toggle('app--open', true)
+    toggleNetwork({ isOpen: true })
     appMain.innerHTML = renderArchive()
   })
 
   router.on('/notes/:id', ({ data }) => {
-    app.classList.toggle('app--open', true)
+    toggleNetwork({ isOpen: true })
     if (!data) throw new Error('Note not found.')
 
     const note = noteIdToNote[data.id]
@@ -38,7 +58,6 @@ export const createApp = async ({ notes }: { notes: NotesNetwork }) => {
     pageContent.innerHTML = note.bodyHtml
   })
 
-  const trigger = document.getElementById('notes-trigger') as HTMLElement
 
   trigger.addEventListener('click', () => {
     if (trigger.dataset['open'] === 'true') {

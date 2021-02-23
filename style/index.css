@@ -20,9 +20,7 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial,
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 
 html {
@@ -95,13 +93,21 @@ p:last-child {
   z-index: 2;
 }
 
+.app__trigger:hover {
+  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.04);
+}
+
 .app__trigger:hover path {
   stroke: var(--link);
 }
 
+.app__trigger:focus:not(:focus-visible) svg {
+  outline: 2px solid transparent;
+}
+
 .app__trigger:focus svg {
-  background-color: var(--link-focus-bg);
-  box-shadow: 0 -2px var(--link-focus-bg), 0 4px var(--text-primary);
+  outline: 3px solid orange;
+  outline-offset: 3px;
 }
 
 .app__interactive-network {

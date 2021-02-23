@@ -13,7 +13,7 @@ export const render = () => `
   <div id="page-content">
     <p class="paragraph">
       I recently started a new way of memorizing the things I learn, which is essentially to write them in my own words as soon as I read them.
-      I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to each other.
+      I follow the <a href="https://en.wikipedia.org/wiki/Zettelkasten" target="_blank" rel="noopener">Zettelkasten</a> method of taking notes. Take a peek at the notes I've kept and how they connect to each other.
     </p>
     <p class="paragraph">
       My hope is that one day, eventually my zettelkasten will be big enough that it can be of use to other people. This is <strong>still very bare</strong>, I plan on adding to it as I read (and note down) more.
@@ -25,7 +25,7 @@ export const render = () => `
     </p>
     <h3>Shout out</h3>
     <p class="paragraph">
-      All reference you see right now are from Michael Geers' <a href="https://www.manning.com/books/micro-frontends-in-action" target="_blank">Micro Frontends in Action</a>, so thank you for being my first reference guide.
+      All reference you see right now are from Michael Geers' <a href="https://www.manning.com/books/micro-frontends-in-action" target="_blank" rel="noopener">Micro Frontends in Action</a>, so thank you for being my first reference guide.
     </p>
   </div>
 </section>

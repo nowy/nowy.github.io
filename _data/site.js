@@ -4,7 +4,6 @@ export default {
   en: {
     locale: 'en',
     title: 'Noel Varanda',
-    tagline: 'Engineer at heart.',
     separator: ' | ',
     notes: {
       url: '/notes/'
