@@ -21,9 +21,6 @@ export const createApp = async ({
 
   if (selectedNode) {
     network.selectNodes([selectedNode])
-    // console.warn({network})
-
-    // network.redraw()
   }
 
   const toggleNetwork = ({ isOpen }: { isOpen: boolean }) => {
