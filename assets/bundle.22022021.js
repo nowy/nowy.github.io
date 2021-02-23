@@ -50773,7 +50773,7 @@ const createNetwork = async options => new Network(options.container, options, {
       max: 150
     },
     font: {
-      face: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+      face: '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif',
       size: 15,
       background: '#fff'
     }
@@ -50786,7 +50786,7 @@ const createNetwork = async options => new Network(options.container, options, {
       highlight: '#1d5069'
     },
     font: {
-      face: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+      face: '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif',
       size: 12
     },
     width: 0.5,
@@ -50826,11 +50826,13 @@ const createNotesNetwork = async options => {
 };
 
 const createApp = async ({
+  selectedNode,
   notes
 }) => {
   const app = document.querySelector('.app');
   const appMain = document.getElementById('app-main');
   const container = document.getElementById('network');
+  const trigger = document.getElementById('notes-trigger');
   const homeHTML = appMain.innerHTML;
   const router = new Navigo('/');
   const network = await createNotesNetwork({
@@ -50838,18 +50840,37 @@ const createApp = async ({
     container
   });
   const noteIdToNote = mapBy(notes.nodes, 'id');
+
+  if (selectedNode) {
+    network.selectNodes([selectedNode]); // console.warn({network})
+    // network.redraw()
+  }
+
+  const toggleNetwork = ({
+    isOpen
+  }) => {
+    app.classList.toggle('app--open', isOpen);
+    trigger.setAttribute('aria-expanded', `${isOpen}`);
+  };
+
   router.on('/', () => {
-    app.classList.remove('app--open');
+    toggleNetwork({
+      isOpen: false
+    });
     appMain.innerHTML = homeHTML;
   });
   router.on('/archive', () => {
-    app.classList.toggle('app--open', true);
+    toggleNetwork({
+      isOpen: true
+    });
     appMain.innerHTML = renderArchive();
   });
   router.on('/notes/:id', ({
     data
   }) => {
-    app.classList.toggle('app--open', true);
+    toggleNetwork({
+      isOpen: true
+    });
     if (!data) throw new Error('Note not found.');
     const note = noteIdToNote[data.id];
     if (!note) throw new Error(`Note not found. ID: "${data.id}"`);
@@ -50859,7 +50880,6 @@ const createApp = async ({
     pageTitle.innerHTML = note.label;
     pageContent.innerHTML = note.bodyHtml;
   });
-  const trigger = document.getElementById('notes-trigger');
   trigger.addEventListener('click', () => {
     if (trigger.dataset['open'] === 'true') {
       window.location.assign('/');
