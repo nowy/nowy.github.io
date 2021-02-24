@@ -32,7 +32,7 @@ export function render(data) {
       </button>
       <div class="app__main" id="app-main">${data.content}</div>
       <script type="module">
-        import { createApp } from '/assets/bundle.22022021.js';
+        import { createApp } from '/assets/bundle.22022024.js';
 
         createApp(${JSON.stringify({
           selectedNode,

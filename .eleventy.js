@@ -10,7 +10,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy('style')
   eleventyConfig.addPassthroughCopy('img')
   eleventyConfig.addPassthroughCopy({
-    'dist/bundle.js': 'assets/bundle.22022021.js',
+    'dist/bundle.js': 'assets/bundle.22022024.js',
   })
 
   eleventyConfig.addWatchTarget('./**/*.css')
