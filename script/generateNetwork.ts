@@ -78,7 +78,7 @@ const getId = (f: string) => {
       ),
       linksTo: (() => {
         const matches = fileContent.match(/\[\[(.*?)\]\]/g)
-        return matches ? matches.map(removeSquareBrackets).map(getId) : []
+        return [...new Set(matches ? matches.map(removeSquareBrackets).map(getId) : [])]
       })(),
       label: (() => {
         if (getId(fileName) === null) return fileName.split('.')[0]
