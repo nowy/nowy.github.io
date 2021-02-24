@@ -1,7 +1,7 @@
 ---
 title: The Value of 10% Time
 description: This short post goes into where I spent my 10% time; what I am proud of, what I regret, and what I would have done differently.
-date: 2021-02-28
+date: 2021-02-24
 tags:
   - 10%
 templateEngineOverride: '11ty.js,md'
