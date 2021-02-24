@@ -2,7 +2,7 @@
 tags: [permanent-note, performance, article]
 ---
 
-# Improving App Performance Without Code
+# App Performance: Where We Go Wrong
 
 Everybody, consciously or not, loves performant applications, and as a consequence engineers spend a lot of time trying to assert visual stability, interactivity, fast loading times, amongst other aspects of performance when delivering features. There are a number of great resources out there telling us *why* performance is important, or *how* to make our applications performant, which I will link at the end of this post, but this post focuses on how we can improve performance without code.
 
@@ -21,4 +21,4 @@ As we write more and more expectations of performance, the boundaries around sl
 As a consequence of defining performance at a user level, it becomes easier to define and automate telemetry systems in code, or per service. We also now know what we should and shouldn't log, or should look out for in code reviews. So not only does centering performance at the idea inception stage help the *user*, we in turn make it easier to automate and assert it at a *function* level.
 
 ## Links
-- [[202102241726 Notes Archive]]
+- [[202102241823 Micro Frontend Performance]]

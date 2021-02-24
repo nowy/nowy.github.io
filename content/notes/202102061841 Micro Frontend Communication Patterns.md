@@ -1,5 +1,5 @@
 ---
-tags: [literature-notes]
+tags: [literature-note]
 ---
 
 # Micro Frontend Communication Patterns

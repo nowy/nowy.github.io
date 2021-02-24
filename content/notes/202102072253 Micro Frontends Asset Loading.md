@@ -1,5 +1,5 @@
 ---
-tags: [reference-notes, caching, assets]
+tags: [literature-note, caching, assets]
 ---
 
 # Micro Frontends Asset Loading

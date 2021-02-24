@@ -13,6 +13,7 @@ Micro frontends are not a technical concept, they are an organisational, and arc
 ## Links
 - [[202101301829 Cross Functional Teams]]
 - [[202102071208 Micro Frontend Architecture]]
+- [[202102241823 Micro Frontend Performance]]
 
 ## References
 - [[Micro Frontends in Action]] (pages 1-6)
