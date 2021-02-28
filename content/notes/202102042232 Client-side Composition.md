@@ -8,7 +8,7 @@ Client-side composition is the idea of assembling markup from a number of differ
 
 Though client-side composition allows us to have an app-like feel, user experience is limited due to the asynchronous loading of fragments, causing a jumping UI. It also incurs an expensive load time due to JavaScript loading and running being dependent on a user's device.
 
-Communication between micro frontends is a major factor to consider when opting for client-side composition as when one micro frontend changes the others may need up react to this change too.
+[[202102061841 Micro Frontend Communication Patterns|Communication between micro frontends]] is a major factor to consider when opting for client-side composition as when one micro frontend changes the others may need up react to this change too.
 
 A few ways that client-side composition can be achieved include:
 
@@ -28,6 +28,7 @@ However it causes difficulties in scoping, forcing us to require namespacing in 
 
 #### Using Web components
 Custom elements offer the major advantage of business logic encapsulation, and come equipped with lifecycle methods which can be used to determine whether they have been created, updated, or destroyed. As such they can be leveraged as a technology-neutral interface when implementing a micro frontend. The Shadow DOM can be leveraged to ensure styles do not leak across different parts of an application - avoiding the need for policing of namespaces.
+
 
 ## Links
 - [[202102061841 Micro Frontend Communication Patterns]]

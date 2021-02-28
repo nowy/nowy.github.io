@@ -5,7 +5,7 @@ tags: [literature-note]
 
 # Server-side Composition
 
-Server-side composition is the idea of composing markup from a number of micro frontends on the server. This technique can be used to improve user experience by bringing faster load times for the user. 
+Server-side composition is the idea of composing markup from a number of micro frontends on the server. This technique can be used to improve user experience by bringing [[202102042246 Server Markup Assembly Performance|faster load times for the user]].
 
 Leveraging server-side composition means that requests made to different servers to fetch micro frontend fragments of markup aren't limited by the client's bandwidth, which in turn can mean better load times for users. More techniques such as parallel loading, and streaming responses can further boost these low loading times.
 
@@ -19,7 +19,9 @@ A few ways that server-side composition can be achieved include:
 	- [Podium](https://podium-lib.io/) #fe-library 
 
 ## Links
+- [[202102071605 Micro Frontend Composition]]
 - [[202102042246 Server Markup Assembly Performance]]
+- [[202102071141 NGINX Server-side Includes]]
 
 ## References
 - [[Micro Frontends in Action]] (pages 59-69)

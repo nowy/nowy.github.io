@@ -23,7 +23,7 @@ Communication between siblings is sometimes necessary when one part of the app n
 Direct communication (E.g. traversing a DOM tree) causes tight coupling, meaning if one of the siblings changes then the other will break too. Using an event-bus/broadcasting model allows siblings to publish and subscribe to actions without knowing about what other siblings may be using them, allowing fragments to communicate to each other without coupling. The **Broadcast API** is a native browser feature that allows this, and persists across pages/tabs.
 
 ### Global context
-Managing global context such as **authentication** can be done leveraging proxies which inject context into HTTP response headers when information comes from server, or a global JavaScript API if the information is on the UI. An app shell is a common place to house this sort of information.
+Managing global context such as **authentication** can be done leveraging proxies which inject context into HTTP response headers when information comes from server, or a global JavaScript API if the information is on the UI. An [[202102062302 App Shells|app shell]] is a common place to house this sort of information.
 
 ## Links
 - [[202102062302 App Shells]]
